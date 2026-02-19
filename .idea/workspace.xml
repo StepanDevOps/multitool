@@ -4,8 +4,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="ff0ed3d4-cbea-41f7-af53-69fb4d000f35" name="Изменения" comment="Добавлен README файл.">
-      <change beforePath="$PROJECT_DIR$/.idea/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+    <list default="true" id="ff0ed3d4-cbea-41f7-af53-69fb4d000f35" name="Изменения" comment="Добавлен vcs.xml">
+      <change afterPath="$PROJECT_DIR$/src/tasks/a_Мышка/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/tasks/a_Мышка/input.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tasks/a_Неглухой_телефон/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/a_Мышка/App.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tasks/a_Неглухой_телефон/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tasks/a_Неглухой_телефон/input.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/c_MultiAccount_Wallet/history.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tasks/a_Неглухой_телефон/output.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/a_Мышка/output.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tasks/b_Warehouse_Manager/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/b_SmartHome_Hub/App.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tasks/b_Warehouse_Manager/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/b_SmartHome_Hub/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tasks/b_Warehouse_Manager/Шпаргалка по ArrayList.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tasks/c_Боевой_движок_ArenaX/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/c_MultiAccount_Wallet/App.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tasks/c_Боевой_движок_ArenaX/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/c_MultiAccount_Wallet/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tasks/d_Unix/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/d_Покер/App.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tasks/d_Unix/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/d_Покер/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tasks/d_Unix/input.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/d_Покер/input.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tasks/d_Unix/output.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/d_Покер/output.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,7 +43,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="danzel" />
+        <entry key="$PROJECT_DIR$" value="main" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -64,18 +79,25 @@
     "RunOnceActivity.MCP Project settings loaded": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "yarik",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "G:/GitHub/repos/multitool",
     "settings.editor.selected.configurable": "configurable.group.tools"
   }
 }]]></component>
+  <component name="Push.Settings">
+    <option name="SHOW_DETAILS_PANEL" value="false" />
+  </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="G:\GitHub\repos\mmultitool\src\tasks\c_Боевой_движок_ArenaX" />
       <recent name="G:\GitHub\repos\mmultitool\src\tasks\c_В_одном_шаге_от_счастья" />
       <recent name="G:\GitHub\repos\mmultitool\src\tasks\b_Пятью_пять_двадцать_пять" />
       <recent name="G:\GitHub\repos\mmultitool\src\tasks\a_Неглухой_телефон" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="G:\GitHub\repos\multitool\src\tasks\c_Боевой_движок_ArenaX" />
+      <recent name="G:\GitHub\repos\multitool" />
     </key>
   </component>
   <component name="SharedIndexes">
@@ -109,13 +131,30 @@
       <option name="project" value="LOCAL" />
       <updated>1771525231155</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Добавлен README файл.">
+      <option name="closed" value="true" />
+      <created>1771525480885</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1771525480885</updated>
+    </task>
+    <task id="LOCAL-00004" summary="Добавлен vcs.xml">
+      <option name="closed" value="true" />
+      <created>1771526027011</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1771526027011</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Задачи по Java для набивания руки" />
     <MESSAGE value="Добавлен README файл." />
-    <option name="LAST_COMMIT_MESSAGE" value="Добавлен README файл." />
+    <MESSAGE value="Добавлен vcs.xml" />
+    <option name="LAST_COMMIT_MESSAGE" value="Добавлен vcs.xml" />
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>

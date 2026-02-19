@@ -1,4 +1,4 @@
-package tasks.b_Warehouse_Manager;
+package tasks.a_Мышка;
 
 public class App {
     public static void main(String[] args) {

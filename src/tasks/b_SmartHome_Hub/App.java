@@ -1,4 +1,4 @@
-package tasks.a_Неглухой_телефон;
+package tasks.b_SmartHome_Hub;
 
 public class App {
     public static void main(String[] args) {
