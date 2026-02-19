@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State>
+            <id>JUnit</id>
+          </State>
+          <State>
+            <id>Java</id>
+          </State>
+          <State>
+            <id>Java 5Помощь в миграции уровня JavaJava</id>
+          </State>
+          <State>
+            <id>Java 8Помощь в миграции уровня JavaJava</id>
+          </State>
+          <State>
+            <id>JavadocJava</id>
+          </State>
+          <State>
+            <id>TestNGJava</id>
+          </State>
+          <State>
+            <id>Зрелость кодаJava</id>
+          </State>
+          <State>
+            <id>МногопоточностьJava</id>
+          </State>
+          <State>
+            <id>Многословные или избыточные конструкции кодаJava</id>
+          </State>
+          <State>
+            <id>Помощь в миграции уровня JavaJava</id>
+          </State>
+          <State>
+            <id>Проблемы компилятораJava</id>
+          </State>
+          <State>
+            <id>ПроизводительностьJava</id>
+          </State>
+          <State>
+            <id>Числовые проблемыJava</id>
+          </State>
+          <State>
+            <id>Языки JVM</id>
+          </State>
+        </expanded-state>
+        <selected-state>
+          <State>
+            <id>Пользовательские</id>
+          </State>
+        </selected-state>
+      </profile-state>
+    </entry>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_21" default="true" project-jdk-name="21" project-jdk-type="JavaSDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+</project>
