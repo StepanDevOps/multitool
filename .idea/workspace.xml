@@ -5,22 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ff0ed3d4-cbea-41f7-af53-69fb4d000f35" name="Изменения" comment="Добавлен vcs.xml">
-      <change afterPath="$PROJECT_DIR$/src/tasks/a_Мышка/README.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/tasks/a_Мышка/input.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tasks/a_Неглухой_телефон/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/a_Мышка/App.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tasks/a_Неглухой_телефон/README.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tasks/a_Неглухой_телефон/input.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/c_MultiAccount_Wallet/history.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tasks/a_Неглухой_телефон/output.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/a_Мышка/output.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tasks/b_Warehouse_Manager/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/b_SmartHome_Hub/App.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tasks/b_Warehouse_Manager/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/b_SmartHome_Hub/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tasks/b_Warehouse_Manager/Шпаргалка по ArrayList.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tasks/c_Боевой_движок_ArenaX/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/c_MultiAccount_Wallet/App.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tasks/c_Боевой_движок_ArenaX/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/c_MultiAccount_Wallet/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tasks/d_Unix/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/d_Покер/App.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tasks/d_Unix/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/d_Покер/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tasks/d_Unix/input.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/d_Покер/input.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/tasks/d_Unix/output.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/d_Покер/output.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tasks/a_Мышка/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/a_Мышка/App.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tasks/a_Мышка/input.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/a_Мышка/input.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tasks/a_Мышка/output.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/a_Мышка/output.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/tasks/b_SmartHome_Hub/App.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/tasks/b_SmartHome_Hub/App.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -36,6 +26,7 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
+        <option value="Interface" />
         <option value="Class" />
       </list>
     </option>
@@ -48,18 +39,18 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "StepanDevOps"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;StepanDevOps&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/StepanDevOps/multitool.git",
-    "accountId": "95b4816f-294c-4726-82bf-821fc5989541"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/StepanDevOps/multitool.git&quot;,
+    &quot;accountId&quot;: &quot;95b4816f-294c-4726-82bf-821fc5989541&quot;
   }
-}]]></component>
+}</component>
   <component name="McpProjectServerCommands">
     <commands />
     <urls />
@@ -75,14 +66,19 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Application.App.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.MCP Project settings loaded": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "git-widget-placeholder": "yarik",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "G:/GitHub/repos/multitool",
-    "settings.editor.selected.configurable": "configurable.group.tools"
+    "last_opened_file_path": "C:/Users/user/Desktop/java tasks/multitool",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "configurable.group.tools",
+    "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
   <component name="Push.Settings">
@@ -104,6 +100,7 @@
     <attachedChunks>
       <set>
         <option value="bundled-jdk-30f59d01ecdd-2fc7cc6b9a17-intellij.indexing.shared.core-IU-253.30387.90" />
+        <option value="bundled-js-predefined-d6986cc7102b-9b0f141eb926-JavaScript-IU-253.30387.90" />
       </set>
     </attachedChunks>
   </component>
@@ -114,6 +111,7 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1771521696729</updated>
+      <workItem from="1771948878301" duration="8052000" />
     </task>
     <task id="LOCAL-00001" summary="Задачи по Java для набивания руки">
       <option name="closed" value="true" />
@@ -149,6 +147,20 @@
     </task>
     <option name="localTasksCounter" value="5" />
     <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Задачи по Java для набивания руки" />
