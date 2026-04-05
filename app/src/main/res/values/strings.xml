@@ -1,3 +1,25 @@
 <resources>
     <string name="app_name">MultiTOOL</string>
+    <string name="title_activity_bottom_navigation">bottom_navigation</string>
+
+    <!-- Extension Card Strings -->
+    <string name="extension_icon">Extension Icon</string>
+    <string name="extension_name">Extension Name</string>
+    <string name="edit_extension">Edit Extension</string>
+
+    <!-- Bottom Navigation Strings -->
+    <string name="nav_home">Home</string>
+    <string name="nav_extensions">Extensions</string>
+    <string name="nav_store">Store</string>
+
+    <!-- Bottom Sheet Strings -->
+    <string name="installed_extensions">Installed Extensions</string>
+
+    <!-- Toolbar Strings -->
+    <string name="settings">Settings</string>
+
+    <!-- Edit Menu Strings -->
+    <string name="menu_resize">Resize</string>
+    <string name="menu_delete">Delete</string>
+    <string name="menu_close">Close</string>
 </resources>
