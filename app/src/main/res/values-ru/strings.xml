@@ -1,0 +1,53 @@
+<resources>
+
+    <string name="extension_icon">Иконка расширения</string>
+    <string name="extension_name">Название расширения</string>
+    <string name="edit_extension">Редактировать расширение</string>
+
+    <string name="nav_home">Главная</string>
+    <string name="nav_extensions">Расширения</string>
+    <string name="nav_store">Магазин</string>
+
+    <string name="installed_extensions">Установленные расширения</string>
+
+    <string name="settings">Настройки</string>
+
+    <string name="menu_resize">Изменить размер</string>
+    <string name="menu_delete">Удалить</string>
+    <string name="menu_close">Закрыть</string>
+
+    <string name="change_theme">Сменить тему</string>
+    <string name="theme_system">Как в системе</string>
+    <string name="theme_light">Светлая</string>
+    <string name="theme_dark">Тёмная</string>
+
+    <string name="change_language">Сменить язык</string>
+    <string name="lang_ru">Русский</string>
+    <string name="lang_en">English</string>
+
+    <string name="profile_section">Профиль</string>
+    <string name="user_name_hint">Имя пользователя</string>
+    <string name="avatar_preview">Предпросмотр аватара</string>
+    <string name="change_avatar">Изменить аватар</string>
+    <string name="use_system_avatar">Использовать системный аватар</string>
+    <string name="system_avatar_unavailable">Системный аватар пока недоступен</string>
+
+    <string name="avatar_default">Аватар по умолчанию</string>
+    <string name="avatar_star">Аватар звезда</string>
+    <string name="avatar_home">Аватар дом</string>
+    <string name="avatar_notes">Аватар заметки</string>
+    <string name="choose_avatar">Выбор аватара</string>
+
+    <string name="create_account">Создать аккаунт</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Пароль</string>
+    <string name="confirm_password_hint">Подтвердите пароль</string>
+    <string name="account_created_local">Локальный аккаунт создан</string>
+    <string name="account_not_created">Аккаунт не создан</string>
+    <string name="already_on_settings_screen">Вы уже на экране настроек</string>
+    <string name="user_name_error_length">Имя должно быть от 3 до 20 символов</string>
+    <string name="error_invalid_email">Введите корректный email</string>
+    <string name="error_weak_password">Пароль должен быть не менее 6 символов</string>
+    <string name="error_password_mismatch">Пароли не совпадают</string>
+</resources>
+
