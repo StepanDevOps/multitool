@@ -6,7 +6,8 @@
         android:id="@+id/menu_settings"
         android:title="@string/settings"
         android:icon="@drawable/ic_more_vert"
-        app:showAsAction="ifRoom" />
+        app:iconTint="@android:color/white"
+        app:showAsAction="always" />
 
 </menu>
 

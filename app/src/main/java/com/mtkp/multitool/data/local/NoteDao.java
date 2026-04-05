@@ -6,7 +6,10 @@ import androidx.room.Query;
 
 import java.util.List;
 
-// Команды: сохранить/удалить
+/**
+ * DAO (Data Access Object) для заметок.
+ * Здесь объявляются запросы к таблице notes.
+ */
 @Dao
 public interface NoteDao {
     @Query("SELECT * FROM notes")

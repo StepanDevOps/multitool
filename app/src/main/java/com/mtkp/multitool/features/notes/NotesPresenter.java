@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Имплементация презентера для заметок.
- * Наследуемся от BasePresenter и реализуем методы нашего Контракта.
+ * Презентер экрана заметок.
+ *
+ * Пока здесь используется фейковый список, чтобы можно было
+ * собрать и проверить интерфейс до подключения Room.
  */
 public class NotesPresenter extends BasePresenter<NotesContract.View> implements NotesContract.Presenter {
 
@@ -21,14 +23,12 @@ public class NotesPresenter extends BasePresenter<NotesContract.View> implements
 
         // Имитируем загрузку данных
         List<NoteEntity> fakeNotes = new ArrayList<>();
-        // fakeNotes.add(new NoteEntity("Купить молоко", "Срочно!"));
+        NoteEntity sampleNote = new NoteEntity();
+        sampleNote.title = "Первая заметка";
+        sampleNote.content = "Это временные данные до подключения Room.";
+        fakeNotes.add(sampleNote);
 
-        if (fakeNotes.isEmpty()) {
-            // Если пусто — можно вызвать метод для показа картинки "Пусто"
-        } else {
-            view.displayNotes(fakeNotes); // Отдаем данные на экран
-        }
-
+        view.displayNotes(fakeNotes); // Отдаем данные на экран
         view.hideLoading(); // Скрываем крутилку
     }
 

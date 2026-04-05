@@ -13,6 +13,12 @@ import com.mtkp.multitool.R;
 
 import java.util.List;
 
+/**
+ * Адаптер для карточек расширений на главном экране.
+ *
+ * Он показывает обычные карточки и отдельную карточку с плюсом
+ * для добавления нового расширения.
+ */
 public class ExtensionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final List<Extension> extensionList;
@@ -23,6 +29,9 @@ public class ExtensionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         void onAddNewExtension();
     }
 
+    /**
+     * Передаём список расширений и обработчик действий по карточкам.
+     */
     public ExtensionAdapter(List<Extension> extensionList, OnExtensionActionListener listener) {
         this.extensionList = extensionList;
         this.listener = listener;
@@ -32,10 +41,12 @@ public class ExtensionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         if (viewType == VIEW_TYPE_ADD) {
+            // Карточка с плюсом для добавления нового расширения.
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_extension_card, parent, false);
             return new AddExtensionViewHolder(view);
         } else {
+            // Обычная карточка установленного расширения.
             View view = LayoutInflater.from(parent.getContext())
                     .inflate(R.layout.item_extension_card, parent, false);
             return new ExtensionViewHolder(view);
@@ -53,6 +64,7 @@ public class ExtensionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     @Override
     public int getItemCount() {
+        // +1 нужен для карточки добавления нового расширения.
         return extensionList.size() + 1; // +1 для кнопки добавления
     }
 
@@ -67,7 +79,9 @@ public class ExtensionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private static final int VIEW_TYPE_EXTENSION = 0;
     private static final int VIEW_TYPE_ADD = 1;
 
-    // ViewHolder для обычной карточки расширения
+    /**
+     * ViewHolder для обычной карточки расширения.
+     */
     public class ExtensionViewHolder extends RecyclerView.ViewHolder {
         TextView tvExtensionName;
         ImageButton btnEditMenu;
@@ -89,7 +103,9 @@ public class ExtensionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
-    // ViewHolder для кнопки добавления расширения
+    /**
+     * ViewHolder для карточки добавления нового расширения.
+     */
     public class AddExtensionViewHolder extends RecyclerView.ViewHolder {
         MaterialCardView cardExtension;
         TextView tvExtensionName;
@@ -118,7 +134,9 @@ public class ExtensionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
         }
     }
 
-    // Модель данных для расширения
+    /**
+     * Простая модель данных одного расширения.
+     */
     public static class Extension {
         private final String name;
         private final String description;

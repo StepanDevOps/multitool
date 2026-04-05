@@ -1,15 +1,12 @@
 package com.mtkp.multitool.features.extensions;
 
 import android.content.Context;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.PopupMenu;
-import android.widget.Toast;
 import com.mtkp.multitool.R;
 
 /**
- * Класс для управления PopupMenu редактирования расширения.
- * Показывает меню с опциями масштабирования, удаления и закрытия.
+ * Вспомогательный класс для показа PopupMenu с действиями над расширением.
  */
 public class ExtensionMenuManager {
 
@@ -20,7 +17,7 @@ public class ExtensionMenuManager {
     }
 
     /**
-     * Показать PopupMenu для редактирования расширения
+     * Показать PopupMenu рядом с кнопкой действий на карточке для редактирования расширения.
      *
      * @param context контекст
      * @param view вид, относительно которого показывать меню
@@ -54,4 +51,3 @@ public class ExtensionMenuManager {
         popupMenu.show();
     }
 }
-

@@ -1,6 +1,8 @@
 package com.mtkp.multitool;
 
 import android.os.Bundle;
+import android.content.Intent;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
@@ -18,14 +20,16 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.mtkp.multitool.features.extensions.ExtensionAdapter;
 import com.mtkp.multitool.features.extensions.ExtensionMenuManager;
 import com.mtkp.multitool.features.extensions.ExtensionsBottomSheetFragment;
+import com.mtkp.multitool.features.settings.SettingsActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * MainActivity - главный экран приложения
- * Отображает сетку установленных расширений, BottomNavigationView для навигации
- * и Toolbar с меню настроек.
+ * Главный экран приложения.
+ *
+ * На нём показываются карточки расширений, нижняя навигация
+ * и кнопка перехода в настройки.
  */
 public class MainActivity extends AppCompatActivity {
 
@@ -66,17 +70,18 @@ public class MainActivity extends AppCompatActivity {
      * Настройка RecyclerView с GridLayoutManager (3 колонки)
      */
     private void setupRecyclerView() {
-        // Создание GridLayoutManager с 3 колонками
+        // Сетка карточек расширений на главном экране.
+        // Позже количество колонок можно будет подстраивать под размер экрана.
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
         rvExtensions.setLayoutManager(gridLayoutManager);
 
-        // Подготовка фейковых данных для тестирования
+        // Фейковые данные, пока не подключили реальное хранилище.
         List<ExtensionAdapter.Extension> extensionList = new ArrayList<>();
         extensionList.add(new ExtensionAdapter.Extension("Notes", "Note taking", R.drawable.ic_notes));
         extensionList.add(new ExtensionAdapter.Extension("Weather", "Weather info", R.drawable.ic_home));
         extensionList.add(new ExtensionAdapter.Extension("Favorites", "Favorites", R.drawable.ic_favorite));
 
-        // Создание адаптера с обработчиком событий
+        // Адаптер связывает список данных с карточками на экране.
         ExtensionAdapter extensionAdapter = new ExtensionAdapter(extensionList, new ExtensionAdapter.OnExtensionActionListener() {
             @Override
             public void onEditMenuClicked(ExtensionAdapter.Extension extension, View anchorView) {
@@ -97,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
      * Настройка BottomNavigationView
      */
     private void setupBottomNavigation() {
+        // Нижнее меню: главная, список расширений и магазин.
         bottomNavigation.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
             if (itemId == R.id.nav_home) {
@@ -121,16 +127,20 @@ public class MainActivity extends AppCompatActivity {
      * Настройка Toolbar с меню
      */
     private void setupToolbar() {
+        // Подключаем Toolbar как верхнюю панель экрана.
         setSupportActionBar(toolbar);
-        // Меню инициализируется через menu_main.xml
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.menu_settings) {
-            // Обработка нажатия на три точки (настройки)
-            Toast.makeText(this, "Settings (Coming Soon)", Toast.LENGTH_SHORT).show();
-            // TODO: Открыть SettingsActivity
+            startActivity(new Intent(this, SettingsActivity.class));
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -140,6 +150,7 @@ public class MainActivity extends AppCompatActivity {
      * Показать всплывающее меню редактирования для карточки
      */
     private void showEditMenu(ExtensionAdapter.Extension extension, View anchorView) {
+        // Всплывающее меню для действий над карточкой расширения.
         ExtensionMenuManager.showEditMenu(this, anchorView, new ExtensionMenuManager.OnMenuItemClickListener() {
             @Override
             public void onResize() {
@@ -164,6 +175,7 @@ public class MainActivity extends AppCompatActivity {
      * Показать BottomSheet со списком установленных расширений
      */
     private void showInstalledExtensionsBottomSheet() {
+        // Меню поверх экрана с простым списком установленных расширений.
         ExtensionsBottomSheetFragment bottomSheet = ExtensionsBottomSheetFragment.newInstance();
         bottomSheet.show(getSupportFragmentManager(), "extensions_bottom_sheet");
     }

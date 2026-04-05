@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">MultiTOOL</string>
-    <string name="title_activity_bottom_navigation">bottom_navigation</string>
+    <string name="app_name" translatable="false">MultiTOOL</string>
+    <string name="title_activity_bottom_navigation" translatable="false">bottom_navigation</string>
 
     <!-- Extension Card Strings -->
     <string name="extension_icon">Extension Icon</string>
@@ -22,4 +22,39 @@
     <string name="menu_resize">Resize</string>
     <string name="menu_delete">Delete</string>
     <string name="menu_close">Close</string>
+
+    <!-- Settings screen -->
+    <string name="change_theme">Change theme</string>
+    <string name="theme_system">System default</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+
+    <string name="change_language">Change language</string>
+    <string name="lang_ru">Russian</string>
+    <string name="lang_en">English</string>
+
+    <string name="profile_section">Profile</string>
+    <string name="user_name_hint">User name</string>
+    <string name="avatar_preview">Avatar preview</string>
+    <string name="change_avatar">Change avatar</string>
+    <string name="use_system_avatar">Use system avatar</string>
+    <string name="system_avatar_unavailable">System avatar is not available yet</string>
+
+    <string name="avatar_default">Default avatar</string>
+    <string name="avatar_star">Star avatar</string>
+    <string name="avatar_home">Home avatar</string>
+    <string name="avatar_notes">Notes avatar</string>
+    <string name="choose_avatar">Choose avatar</string>
+
+    <string name="create_account">Create account</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Password</string>
+    <string name="confirm_password_hint">Confirm password</string>
+    <string name="account_created_local">Local account created</string>
+    <string name="account_not_created">Account not created</string>
+    <string name="already_on_settings_screen">You are already on settings screen</string>
+    <string name="user_name_error_length">Name should be 3 to 20 characters</string>
+    <string name="error_invalid_email">Enter a valid email</string>
+    <string name="error_weak_password">Password must be at least 6 characters</string>
+    <string name="error_password_mismatch">Passwords do not match</string>
 </resources>
