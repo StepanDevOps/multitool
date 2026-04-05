@@ -51,7 +51,9 @@
     <string name="password_hint">Password</string>
     <string name="confirm_password_hint">Confirm password</string>
     <string name="account_created_local">Local account created</string>
+    <string name="logged_out_local">You have logged out</string>
     <string name="account_not_created">Account not created</string>
+    <string name="logout">Log out</string>
     <string name="already_on_settings_screen">You are already on settings screen</string>
     <string name="user_name_error_length">Name should be 3 to 20 characters</string>
     <string name="error_invalid_email">Enter a valid email</string>

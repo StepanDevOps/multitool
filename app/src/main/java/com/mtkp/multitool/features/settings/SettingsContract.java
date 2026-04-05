@@ -74,14 +74,15 @@ public interface SettingsContract {
         void showAccountCreatedMessage();
 
         /**
+         * Показать сообщение об успешном выходе из локального профиля.
+         */
+        void showLoggedOutMessage();
+
+        /**
          * Показать обычное текстовое сообщение пользователю.
          */
         void showMessage(String message);
 
-        /**
-         * Перерисовать экран после изменения языка или других важных настроек.
-         */
-        void refreshUi();
     }
 
     /**
@@ -129,6 +130,11 @@ public interface SettingsContract {
          * Обработать попытку создания локального аккаунта.
          */
         void onCreateAccountClicked(String email, String password, String confirmPassword);
+
+        /**
+         * Обработать выход из локального профиля.
+         */
+        void onLogoutClicked();
     }
 }
 

@@ -12,12 +12,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.os.LocaleListCompat;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputLayout;
 import com.mtkp.multitool.R;
@@ -34,6 +39,7 @@ public class SettingsActivity extends AppCompatActivity implements SettingsContr
     private SettingsContract.Presenter presenter;
     private boolean isRestoringState;
 
+    private AppBarLayout appBarLayout;
     private Toolbar toolbar;
     private RadioGroup rgTheme;
     private RadioGroup rgLanguage;
@@ -41,6 +47,9 @@ public class SettingsActivity extends AppCompatActivity implements SettingsContr
     private EditText etUserName;
     private ImageView ivAvatarPreview;
     private TextView tvAccountState;
+    private TextView tvSectionTitle;
+    private android.view.View profileContainer;
+    private android.view.View accountContainer;
     private EditText etEmail;
     private EditText etPassword;
     private EditText etConfirmPassword;
@@ -55,12 +64,14 @@ public class SettingsActivity extends AppCompatActivity implements SettingsContr
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_settings);
 
         presenter = new SettingsPresenter(new SettingsStorage(getApplicationContext()));
         presenter.attachView(this);
 
         initViews();
+        setupEdgeToEdgeInsets();
         setupToolbar();
         setupListeners();
         presenter.loadSettings();
@@ -73,6 +84,7 @@ public class SettingsActivity extends AppCompatActivity implements SettingsContr
     }
 
     private void initViews() {
+        appBarLayout = findViewById(R.id.appbar_settings);
         toolbar = findViewById(R.id.toolbar_settings);
         rgTheme = findViewById(R.id.rg_theme);
         rgLanguage = findViewById(R.id.rg_language);
@@ -80,6 +92,9 @@ public class SettingsActivity extends AppCompatActivity implements SettingsContr
         etUserName = findViewById(R.id.et_user_name);
         ivAvatarPreview = findViewById(R.id.iv_avatar_preview);
         tvAccountState = findViewById(R.id.tv_account_state);
+        tvSectionTitle = findViewById(R.id.tv_section_title);
+        profileContainer = findViewById(R.id.profile_container);
+        accountContainer = findViewById(R.id.account_container);
         etEmail = findViewById(R.id.et_email);
         etPassword = findViewById(R.id.et_password);
         etConfirmPassword = findViewById(R.id.et_confirm_password);
@@ -91,6 +106,22 @@ public class SettingsActivity extends AppCompatActivity implements SettingsContr
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setTitle(R.string.settings);
         }
+    }
+
+    private void setupEdgeToEdgeInsets() {
+        android.view.View root = findViewById(R.id.settings_root);
+        ViewCompat.setOnApplyWindowInsetsListener(root, (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom);
+            appBarLayout.setPadding(
+                    appBarLayout.getPaddingLeft(),
+                    systemBars.top,
+                    appBarLayout.getPaddingRight(),
+                    appBarLayout.getPaddingBottom()
+            );
+            return insets;
+        });
+        ViewCompat.requestApplyInsets(root);
     }
 
     private void setupListeners() {
@@ -111,7 +142,14 @@ public class SettingsActivity extends AppCompatActivity implements SettingsContr
             if (isRestoringState) {
                 return;
             }
-            String language = checkedId == R.id.rb_language_ru ? "ru" : "en";
+            String language;
+            if (checkedId == R.id.rb_language_en) {
+                language = "en";
+            } else if (checkedId == R.id.rb_language_ru) {
+                language = "ru";
+            } else {
+                return;
+            }
             presenter.onLanguageSelected(language);
         });
 
@@ -146,6 +184,9 @@ public class SettingsActivity extends AppCompatActivity implements SettingsContr
                 etPassword.getText() == null ? "" : etPassword.getText().toString(),
                 etConfirmPassword.getText() == null ? "" : etConfirmPassword.getText().toString()
         ));
+
+        MaterialButton btnLogout = findViewById(R.id.btn_logout);
+        btnLogout.setOnClickListener(v -> presenter.onLogoutClicked());
     }
 
     private void showAvatarPickerDialog() {
@@ -211,6 +252,7 @@ public class SettingsActivity extends AppCompatActivity implements SettingsContr
 
     @Override
     public void applyTheme(int themeMode) {
+        // Не делаем fade-to-black: в режиме "Как в системе" пересоздание может не произойти.
         AppCompatDelegate.setDefaultNightMode(themeMode);
     }
 
@@ -236,9 +278,14 @@ public class SettingsActivity extends AppCompatActivity implements SettingsContr
 
     @Override
     public void showAccountCreatedState(boolean accountCreated) {
-        tvAccountState.setText(accountCreated
-                ? R.string.account_created_local
-                : R.string.account_not_created);
+        tvSectionTitle.setText(accountCreated
+                ? R.string.profile_section
+                : R.string.create_account);
+
+        tvAccountState.setVisibility(android.view.View.GONE);
+
+        profileContainer.setVisibility(accountCreated ? android.view.View.VISIBLE : android.view.View.GONE);
+        accountContainer.setVisibility(accountCreated ? android.view.View.GONE : android.view.View.VISIBLE);
     }
 
     @Override
@@ -262,13 +309,13 @@ public class SettingsActivity extends AppCompatActivity implements SettingsContr
     }
 
     @Override
-    public void showMessage(String message) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    public void showLoggedOutMessage() {
+        showMessage(getString(R.string.logged_out_local));
     }
 
     @Override
-    public void refreshUi() {
-        recreate();
+    public void showMessage(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     @Override

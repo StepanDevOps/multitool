@@ -43,7 +43,9 @@
     <string name="password_hint">Пароль</string>
     <string name="confirm_password_hint">Подтвердите пароль</string>
     <string name="account_created_local">Локальный аккаунт создан</string>
+    <string name="logged_out_local">Вы вышли из профиля</string>
     <string name="account_not_created">Аккаунт не создан</string>
+    <string name="logout">Выйти</string>
     <string name="already_on_settings_screen">Вы уже на экране настроек</string>
     <string name="user_name_error_length">Имя должно быть от 3 до 20 символов</string>
     <string name="error_invalid_email">Введите корректный email</string>

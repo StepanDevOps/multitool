@@ -103,6 +103,17 @@ public class SettingsStorage {
     public void setAccountCreated(boolean accountCreated) {
         prefs.edit().putBoolean(KEY_ACCOUNT_CREATED, accountCreated).apply();
     }
+
+    /**
+     * Очистить локальные данные профиля при выходе из аккаунта.
+     */
+    public void clearLocalAccount() {
+        prefs.edit()
+                .putBoolean(KEY_ACCOUNT_CREATED, false)
+                .putString(KEY_USER_NAME, "")
+                .putInt(KEY_AVATAR_RES_ID, R.drawable.ic_account_box)
+                .apply();
+    }
 }
 
 

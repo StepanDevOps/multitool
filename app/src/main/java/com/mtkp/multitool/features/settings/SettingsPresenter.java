@@ -49,6 +49,9 @@ public class SettingsPresenter extends BasePresenter<SettingsContract.View>
      */
     @Override
     public void onThemeSelected(int themeMode) {
+        if (storage.getThemeMode() == themeMode) {
+            return;
+        }
         storage.setThemeMode(themeMode);
         if (isViewAttached()) {
             view.applyTheme(themeMode);
@@ -60,10 +63,12 @@ public class SettingsPresenter extends BasePresenter<SettingsContract.View>
      */
     @Override
     public void onLanguageSelected(String languageTag) {
+        if (languageTag == null || languageTag.equals(storage.getLanguageTag())) {
+            return;
+        }
         storage.setLanguageTag(languageTag);
         if (isViewAttached()) {
             view.applyLanguage(languageTag);
-            view.refreshUi();
         }
     }
 
@@ -135,6 +140,24 @@ public class SettingsPresenter extends BasePresenter<SettingsContract.View>
         if (isViewAttached()) {
             view.showAccountCreatedState(true);
             view.showAccountCreatedMessage();
+        }
+    }
+
+    /**
+     * Сбрасываем локальный профиль и возвращаем экран к форме создания аккаунта.
+     */
+    @Override
+    public void onLogoutClicked() {
+        storage.clearLocalAccount();
+        if (isViewAttached()) {
+            view.showCurrentSettings(
+                    storage.getThemeMode(),
+                    storage.getLanguageTag(),
+                    storage.getUserName(),
+                    storage.getAvatarResId(),
+                    storage.isAccountCreated()
+            );
+            view.showLoggedOutMessage();
         }
     }
 }
