@@ -59,4 +59,45 @@
     <string name="error_invalid_email">Enter a valid email</string>
     <string name="error_weak_password">Password must be at least 6 characters</string>
     <string name="error_password_mismatch">Passwords do not match</string>
+
+    <!-- Extensions shop -->
+    <string name="extensions_search_title">Search</string>
+    <string name="extensions_search_hint">Search by name, author or description</string>
+    <string name="extensions_filter_title">Filter by category</string>
+    <string name="extensions_sort_title">Sort</string>
+    <string name="extensions_sort_popular">Popular</string>
+    <string name="extensions_sort_newest">Newest</string>
+    <string name="extensions_sort_alphabetical">A-Z</string>
+
+    <string name="category_all">All</string>
+    <string name="category_productivity">Productivity</string>
+    <string name="category_personalization">Personalization</string>
+    <string name="category_education">Education</string>
+    <string name="category_media">Media</string>
+    <string name="category_utilities">Utilities</string>
+    <string name="category_other">Other</string>
+
+    <string name="extension_open">Open</string>
+    <string name="extension_badge_update">Update available</string>
+    <string name="extension_badge_installed">Installed</string>
+    <string name="extension_shop_meta">%1$.1f • %2$s installs</string>
+    <string name="extension_upload_action">Upload extension</string>
+    <string name="extension_shop_login_required">Sign in first in Settings to upload your extension</string>
+    <string name="extension_upload_later">Extension upload will be implemented later</string>
+
+    <!-- Extension details -->
+    <string name="extension_screen_title">Extension</string>
+    <string name="extension_actions_title">Actions</string>
+    <string name="extension_short_description_title">Short description</string>
+    <string name="extension_markdown_title">Detailed description</string>
+    <string name="extension_author_value">Author: %1$s</string>
+    <string name="extension_version_value">Version: %1$s</string>
+    <string name="extension_category_value">Category: %1$s</string>
+    <string name="extension_installs_value">Installs: %1$s</string>
+    <string name="extension_rating_value">%1$.1f</string>
+    <string name="extension_action_install">Install</string>
+    <string name="extension_action_update">Update</string>
+    <string name="extension_action_check_updates">Check updates</string>
+    <string name="extension_action_delete">Delete</string>
+    <string name="extension_action_placeholder">Action "%1$s" will be implemented later</string>
 </resources>

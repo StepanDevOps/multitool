@@ -13,6 +13,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MultiTOOL" >
         <activity
+            android:name=".features.extensions.ExtensionActivity"
+            android:exported="false" />
+        <activity
+            android:name=".features.extensions.ExtensionsShopActivity"
+            android:exported="false" />
+        <activity
             android:name=".features.settings.SettingsActivity"
             android:exported="false" />
         <activity

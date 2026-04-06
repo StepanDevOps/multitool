@@ -51,5 +51,46 @@
     <string name="error_invalid_email">Введите корректный email</string>
     <string name="error_weak_password">Пароль должен быть не менее 6 символов</string>
     <string name="error_password_mismatch">Пароли не совпадают</string>
+
+    <!-- Магазин расширений -->
+    <string name="extensions_search_title">Поиск</string>
+    <string name="extensions_search_hint">Поиск по названию, автору или описанию</string>
+    <string name="extensions_filter_title">Фильтр по категории</string>
+    <string name="extensions_sort_title">Сортировка</string>
+    <string name="extensions_sort_popular">Популярные</string>
+    <string name="extensions_sort_newest">Новые</string>
+    <string name="extensions_sort_alphabetical">А-Я</string>
+
+    <string name="category_all">Все</string>
+    <string name="category_productivity">Продуктивность</string>
+    <string name="category_personalization">Персонализация</string>
+    <string name="category_education">Образование</string>
+    <string name="category_media">Медиа</string>
+    <string name="category_utilities">Утилиты</string>
+    <string name="category_other">Другое</string>
+
+    <string name="extension_open">Перейти</string>
+    <string name="extension_badge_update">Есть обновление</string>
+    <string name="extension_badge_installed">Установлено</string>
+    <string name="extension_shop_meta">%1$.1f • %2$s установок</string>
+    <string name="extension_upload_action">Добавить плагин</string>
+    <string name="extension_shop_login_required">Сначала войдите в аккаунт в Настройках</string>
+    <string name="extension_upload_later">Загрузка расширений будет реализована позже</string>
+
+    <!-- Страница расширения -->
+    <string name="extension_screen_title">Расширение</string>
+    <string name="extension_actions_title">Действия</string>
+    <string name="extension_short_description_title">Краткое описание</string>
+    <string name="extension_markdown_title">Подробное описание</string>
+    <string name="extension_author_value">Автор: %1$s</string>
+    <string name="extension_version_value">Версия: %1$s</string>
+    <string name="extension_category_value">Категория: %1$s</string>
+    <string name="extension_installs_value">Установок: %1$s</string>
+    <string name="extension_rating_value">%1$.1f</string>
+    <string name="extension_action_install">Установить</string>
+    <string name="extension_action_update">Обновить</string>
+    <string name="extension_action_check_updates">Проверить обновления</string>
+    <string name="extension_action_delete">Удалить</string>
+    <string name="extension_action_placeholder">Действие "%1$s" будет реализовано позже</string>
 </resources>
 

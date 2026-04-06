@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_shop_add_extension"
+        android:icon="@drawable/ic_baseline_add_24"
+        android:title="@string/extension_upload_action"
+        app:iconTint="@android:color/white"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/menu_settings"
+        android:icon="@drawable/ic_more_vert"
+        android:title="@string/settings"
+        app:iconTint="@android:color/white"
+        app:showAsAction="always" />
+
+</menu>
+
