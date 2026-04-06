@@ -28,7 +28,7 @@ import java.util.List;
 
 /**
  * Главный экран приложения.
- *
+ * <p>
  * На нём показываются карточки расширений, нижняя навигация
  * и кнопка перехода в настройки.
  */
@@ -45,11 +45,20 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Применить edge-to-edge
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+        View rootView = findViewById(R.id.main);
+        View appBarLayout = findViewById(R.id.appBarLayout);
+        ViewCompat.setOnApplyWindowInsetsListener(rootView, (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            v.setPadding(systemBars.left, 0, systemBars.right, 0);
+            appBarLayout.setPadding(
+                    appBarLayout.getPaddingLeft(),
+                    systemBars.top,
+                    appBarLayout.getPaddingRight(),
+                    appBarLayout.getPaddingBottom()
+            );
             return insets;
         });
+        ViewCompat.requestApplyInsets(rootView);
 
         // Инициализация элементов UI
         initializeViews();
@@ -108,20 +117,22 @@ public class MainActivity extends AppCompatActivity {
             int itemId = item.getItemId();
             if (itemId == R.id.nav_home) {
                 // Главная страница (текущая)
-                Toast.makeText(this, "Home", Toast.LENGTH_SHORT).show();
                 return true;
             } else if (itemId == R.id.nav_extensions) {
                 // Открыть BottomSheet со списком расширений
                 showInstalledExtensionsBottomSheet();
-                return true;
+                return false;
             } else if (itemId == R.id.nav_store) {
                 // Открыть экран магазина расширений.
                 startActivity(new Intent(this, ExtensionsShopActivity.class));
-                return true;
+                overridePendingTransition(0, 0);
+                // Не оставляем выбранным store на экране, с которого уходим.
+                return false;
             }
             return false;
         });
     }
+
 
     /**
      * Настройка Toolbar с меню

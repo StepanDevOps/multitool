@@ -72,6 +72,8 @@
         android:id="@+id/bottomNavigationShop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        app:itemHorizontalTranslationEnabled="false"
+        app:labelVisibilityMode="labeled"
         app:menu="@menu/menu_bottom_navigation" />
 
 </LinearLayout>

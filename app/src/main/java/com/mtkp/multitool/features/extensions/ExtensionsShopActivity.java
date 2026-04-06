@@ -86,7 +86,7 @@ public class ExtensionsShopActivity extends AppCompatActivity {
     private void setupWindowInsets() {
         ViewCompat.setOnApplyWindowInsetsListener(root, (view, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            view.setPadding(systemBars.left, 0, systemBars.right, systemBars.bottom);
+            view.setPadding(systemBars.left, 0, systemBars.right, 0);
             appBarLayout.setPadding(
                     appBarLayout.getPaddingLeft(),
                     systemBars.top,
@@ -286,5 +286,11 @@ public class ExtensionsShopActivity extends AppCompatActivity {
         }
 
         Snackbar.make(root, R.string.extension_upload_later, Snackbar.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, 0);
     }
 }
