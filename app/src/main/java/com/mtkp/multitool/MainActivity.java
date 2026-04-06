@@ -20,6 +20,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.mtkp.multitool.features.extensions.ExtensionAdapter;
 import com.mtkp.multitool.features.extensions.ExtensionMenuManager;
 import com.mtkp.multitool.features.extensions.ExtensionsBottomSheetFragment;
+import com.mtkp.multitool.features.extensions.ExtensionsShopActivity;
 import com.mtkp.multitool.features.settings.SettingsActivity;
 
 import java.util.ArrayList;
@@ -114,9 +115,8 @@ public class MainActivity extends AppCompatActivity {
                 showInstalledExtensionsBottomSheet();
                 return true;
             } else if (itemId == R.id.nav_store) {
-                // Открыть магазин расширений (будущая активность)
-                Toast.makeText(this, "Extension Store (Coming Soon)", Toast.LENGTH_SHORT).show();
-                // TODO: Открыть StoreActivity
+                // Открыть экран магазина расширений.
+                startActivity(new Intent(this, ExtensionsShopActivity.class));
                 return true;
             }
             return false;
