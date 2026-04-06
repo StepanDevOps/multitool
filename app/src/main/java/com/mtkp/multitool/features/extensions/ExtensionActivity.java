@@ -2,6 +2,7 @@ package com.mtkp.multitool.features.extensions;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,6 +23,8 @@ import com.mtkp.multitool.R;
 import com.mtkp.multitool.features.settings.SettingsActivity;
 
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -120,7 +123,7 @@ public class ExtensionActivity extends AppCompatActivity {
         titleView.setText(extensionItem.getTitle());
         authorView.setText(getString(R.string.extension_author_value, extensionItem.getAuthor()));
         versionView.setText(getString(R.string.extension_version_value, extensionItem.getVersion()));
-        categoryView.setText(getString(R.string.extension_category_value, getString(extensionItem.getCategoryResId())));
+        categoryView.setText(getString(R.string.extension_category_value, formatCategories(extensionItem.getCategoryResIds())));
         installsView.setText(getString(R.string.extension_installs_value, numberFormat.format(extensionItem.getInstalls())));
         ratingView.setText(getString(R.string.extension_rating_value, extensionItem.getRating()));
         shortDescriptionView.setText(extensionItem.getShortDescription());
@@ -156,6 +159,18 @@ public class ExtensionActivity extends AppCompatActivity {
         });
 
         secondaryActionButton.setOnClickListener(v -> showActionMessage(getString(R.string.extension_action_delete)));
+    }
+
+    private String formatCategories(int[] categoryResIds) {
+        if (categoryResIds == null || categoryResIds.length == 0) {
+            return getString(R.string.category_other);
+        }
+
+        List<String> names = new ArrayList<>();
+        for (int categoryResId : categoryResIds) {
+            names.add(getString(categoryResId));
+        }
+        return TextUtils.join(", ", names);
     }
 
     private void showActionMessage(String action) {

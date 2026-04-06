@@ -1,11 +1,10 @@
 package com.mtkp.multitool.features.extensions;
 
-import androidx.annotation.StringRes;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Небольшой набор переиспользуемых операций для каталога расширений.
@@ -56,23 +55,28 @@ public final class ExtensionsCatalogManager {
     }
 
     /**
-     * Фильтруем список по категории.
-     *
-     * @param categoryResId id строки категории. Если равно 0, фильтр отключён.
+     * Фильтруем список по нескольким категориям.
+     * <p>
+     * Если список категорий пустой, фильтр отключён.
      */
-    public static List<ExtensionItem> filterByCategory(List<ExtensionItem> source, @StringRes int categoryResId) {
+    public static List<ExtensionItem> filterByCategories(List<ExtensionItem> source,
+                                                         Set<Integer> selectedCategoryResIds) {
         if (source == null || source.isEmpty()) {
             return Collections.emptyList();
         }
 
-        if (categoryResId == 0) {
+        if (selectedCategoryResIds == null || selectedCategoryResIds.isEmpty()) {
             return new ArrayList<>(source);
         }
 
         List<ExtensionItem> result = new ArrayList<>();
         for (ExtensionItem item : source) {
-            if (item.getCategoryResId() == categoryResId) {
-                result.add(item);
+            int[] categoryIds = item.getCategoryResIds();
+            for (int id : categoryIds) {
+                if (selectedCategoryResIds.contains(id)) {
+                    result.add(item);
+                    break;
+                }
             }
         }
         return result;
@@ -102,10 +106,10 @@ public final class ExtensionsCatalogManager {
      */
     public static List<ExtensionItem> applyAll(List<ExtensionItem> source,
                                                String query,
-                                               @StringRes int categoryResId,
+                                               Set<Integer> selectedCategoryResIds,
                                                SortMode sortMode) {
         List<ExtensionItem> result = filterByQuery(source, query);
-        result = filterByCategory(result, categoryResId);
+        result = filterByCategories(result, selectedCategoryResIds);
         return sort(result, sortMode);
     }
 }

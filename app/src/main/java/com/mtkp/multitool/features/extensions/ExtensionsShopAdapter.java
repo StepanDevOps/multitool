@@ -5,13 +5,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.util.TypedValue;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.chip.Chip;
 import com.google.android.material.card.MaterialCardView;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.mtkp.multitool.R;
 
 import java.text.NumberFormat;
@@ -71,8 +73,7 @@ public class ExtensionsShopAdapter extends RecyclerView.Adapter<ExtensionsShopAd
     class ExtensionViewHolder extends RecyclerView.ViewHolder {
 
         private final MaterialCardView card;
-        private final Chip chipCategory;
-        private final Chip chipStatus;
+        private final ChipGroup chipGroupCategories;
         private final ImageView iconView;
         private final TextView titleView;
         private final TextView descriptionView;
@@ -82,8 +83,7 @@ public class ExtensionsShopAdapter extends RecyclerView.Adapter<ExtensionsShopAd
         ExtensionViewHolder(@NonNull View itemView) {
             super(itemView);
             card = itemView.findViewById(R.id.card_extension_shop);
-            chipCategory = itemView.findViewById(R.id.chip_category);
-            chipStatus = itemView.findViewById(R.id.chip_status);
+            chipGroupCategories = itemView.findViewById(R.id.chip_group_categories);
             iconView = itemView.findViewById(R.id.iv_extension_icon);
             titleView = itemView.findViewById(R.id.tv_extension_title);
             descriptionView = itemView.findViewById(R.id.tv_extension_description);
@@ -96,11 +96,7 @@ public class ExtensionsShopAdapter extends RecyclerView.Adapter<ExtensionsShopAd
             iconView.setImageResource(item.getIconResId());
             titleView.setText(item.getTitle());
             descriptionView.setText(item.getShortDescription());
-            chipCategory.setText(itemView.getContext().getString(item.getCategoryResId()));
-            chipStatus.setVisibility(item.isInstalled() ? View.VISIBLE : View.GONE);
-            chipStatus.setText(item.isUpdateAvailable()
-                    ? itemView.getContext().getString(R.string.extension_badge_update)
-                    : itemView.getContext().getString(R.string.extension_badge_installed));
+            renderCategories(item.getCategoryResIds());
             metaView.setText(itemView.getContext().getString(
                     R.string.extension_shop_meta,
                     item.getRating(),
@@ -119,7 +115,18 @@ public class ExtensionsShopAdapter extends RecyclerView.Adapter<ExtensionsShopAd
                 }
             });
         }
+
+        private void renderCategories(int[] categoryResIds) {
+            chipGroupCategories.removeAllViews();
+            for (int categoryResId : categoryResIds) {
+                Chip chip = new Chip(itemView.getContext(), null, com.google.android.material.R.style.Widget_Material3_Chip_Assist);
+                chip.setText(categoryResId);
+                chip.setTextSize(TypedValue.COMPLEX_UNIT_SP, 10f);
+                chip.setCheckable(false);
+                chip.setClickable(false);
+                chip.setFocusable(false);
+                chipGroupCategories.addView(chip);
+            }
+        }
     }
 }
-
-

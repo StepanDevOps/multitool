@@ -17,7 +17,7 @@ public class ExtensionItem {
     private final String version;
     private final int installs;
     private final float rating;
-    private final @StringRes int categoryResId;
+    private final @StringRes int[] categoryResIds;
     private final String shortDescription;
     private final String markdownDescription;
     private final @DrawableRes int iconResId;
@@ -30,7 +30,7 @@ public class ExtensionItem {
                          String version,
                          int installs,
                          float rating,
-                         @StringRes int categoryResId,
+                         @StringRes int[] categoryResIds,
                          String shortDescription,
                          String markdownDescription,
                          @DrawableRes int iconResId,
@@ -42,7 +42,7 @@ public class ExtensionItem {
         this.version = version;
         this.installs = installs;
         this.rating = rating;
-        this.categoryResId = categoryResId;
+        this.categoryResIds = categoryResIds == null ? new int[0] : categoryResIds.clone();
         this.shortDescription = shortDescription;
         this.markdownDescription = markdownDescription;
         this.iconResId = iconResId;
@@ -74,8 +74,8 @@ public class ExtensionItem {
         return rating;
     }
 
-    public int getCategoryResId() {
-        return categoryResId;
+    public int[] getCategoryResIds() {
+        return categoryResIds.clone();
     }
 
     public String getShortDescription() {
@@ -98,4 +98,3 @@ public class ExtensionItem {
         return updateAvailable;
     }
 }
-

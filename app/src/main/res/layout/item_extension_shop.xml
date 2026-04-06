@@ -15,32 +15,29 @@
         android:orientation="vertical"
         android:padding="12dp">
 
-        <LinearLayout
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chip_group_categories"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            app:chipSpacingHorizontal="4dp"
+            app:chipSpacingVertical="-10dp"
+            app:singleLine="false"
+            tools:ignore="MissingConstraints">
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chip_category"
                 style="@style/Widget.Material3.Chip.Assist"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/category_all"
-                tools:text="Продуктивность" />
-
-            <View
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_weight="1" />
+                android:textSize="10sp"
+                android:text="@string/category_productivity" />
 
             <com.google.android.material.chip.Chip
-                android:id="@+id/chip_status"
                 style="@style/Widget.Material3.Chip.Assist"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="gone"
-                tools:text="Обновление" />
-        </LinearLayout>
+                android:textSize="10sp"
+                android:text="@string/category_education" />
+        </com.google.android.material.chip.ChipGroup>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -68,7 +65,7 @@
                     android:id="@+id/tv_extension_title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Extension Name"
+                    android:text="@string/extension_name"
                     android:textAppearance="@style/TextAppearance.Material3.TitleMedium"
                     android:textStyle="bold" />
 
@@ -79,7 +76,7 @@
                     android:layout_marginTop="4dp"
                     android:ellipsize="end"
                     android:maxLines="3"
-                    android:text="Short description"
+                    android:text="@string/extension_short_description_title"
                     android:textAppearance="@style/TextAppearance.Material3.BodySmall"
                     tools:text="Compact helper for notes, focus and fast actions." />
 

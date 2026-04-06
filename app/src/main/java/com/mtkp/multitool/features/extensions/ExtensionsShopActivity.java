@@ -27,7 +27,9 @@ import com.mtkp.multitool.R;
 import com.mtkp.multitool.data.settings.SettingsStorage;
 import com.mtkp.multitool.features.settings.SettingsActivity;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Экран магазина расширений.
@@ -49,8 +51,9 @@ public class ExtensionsShopActivity extends AppCompatActivity {
 
     private List<ExtensionItem> sourceItems;
     private String currentQuery = "";
-    private int currentCategoryResId = 0;
+    private final Set<Integer> selectedCategoryResIds = new HashSet<>();
     private ExtensionsCatalogManager.SortMode currentSortMode = ExtensionsCatalogManager.SortMode.POPULAR;
+    private boolean isUpdatingCategorySelection;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -157,13 +160,46 @@ public class ExtensionsShopActivity extends AppCompatActivity {
     }
 
     private void setupCategoryFilter() {
+        categoryChipGroup.check(R.id.chip_category_all);
         categoryChipGroup.setOnCheckedStateChangeListener((group, checkedIds) -> {
-            if (checkedIds == null || checkedIds.isEmpty()) {
-                currentCategoryResId = 0;
-            } else {
-                int checkedId = checkedIds.get(0);
-                currentCategoryResId = mapCategoryChipToStringRes(checkedId);
+            if (isUpdatingCategorySelection) {
+                return;
             }
+
+            List<Integer> activeCheckedIds = checkedIds;
+
+            isUpdatingCategorySelection = true;
+
+            // Если ничего не выбрано, включаем "Все" обратно.
+            if (activeCheckedIds.isEmpty()) {
+                categoryChipGroup.check(R.id.chip_category_all);
+                selectedCategoryResIds.clear();
+                isUpdatingCategorySelection = false;
+                applyFilters();
+                return;
+            }
+
+            // Если выбрали конкретные категории вместе с "Все",
+            // снимаем "Все" и оставляем только конкретные.
+            if (activeCheckedIds.contains(R.id.chip_category_all) && activeCheckedIds.size() > 1) {
+                android.view.View allChip = categoryChipGroup.findViewById(R.id.chip_category_all);
+                if (allChip instanceof com.google.android.material.chip.Chip) {
+                    ((com.google.android.material.chip.Chip) allChip).setChecked(false);
+                }
+                activeCheckedIds = categoryChipGroup.getCheckedChipIds();
+            }
+
+            selectedCategoryResIds.clear();
+            if (!activeCheckedIds.contains(R.id.chip_category_all)) {
+                for (int checkedId : activeCheckedIds) {
+                    int categoryResId = mapCategoryChipToStringRes(checkedId);
+                    if (categoryResId != 0) {
+                        selectedCategoryResIds.add(categoryResId);
+                    }
+                }
+            }
+
+            isUpdatingCategorySelection = false;
             applyFilters();
         });
     }
@@ -189,14 +225,16 @@ public class ExtensionsShopActivity extends AppCompatActivity {
         List<ExtensionItem> filtered = ExtensionsCatalogManager.applyAll(
                 sourceItems,
                 currentQuery,
-                currentCategoryResId,
+                selectedCategoryResIds,
                 currentSortMode
         );
         adapter.submitList(filtered);
     }
 
     private int mapCategoryChipToStringRes(int chipId) {
-        if (chipId == R.id.chip_category_productivity) {
+        if (chipId == R.id.chip_category_all) {
+            return 0;
+        } else if (chipId == R.id.chip_category_productivity) {
             return R.string.category_productivity;
         } else if (chipId == R.id.chip_category_personalization) {
             return R.string.category_personalization;
