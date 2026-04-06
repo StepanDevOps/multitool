@@ -64,6 +64,7 @@ dependencies {
     debugImplementation(libs.ui.test.manifest)
     val room_version = "2.8.4"
 
+    implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.room:room-runtime:$room_version")
 
     // If this project uses any Kotlin source, use Kotlin Symbol Processing (KSP)
