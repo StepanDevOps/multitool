@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+        <!-- Базовый стиль для всех MaterialButton -->
+        <style name="BaseMaterialButton" parent="Widget.Material3.Button">
+            <item name="android:textSize">14sp</item>
+            <item name="android:textStyle">bold</item>
+            <item name="android:textColor">#ffffff</item>
+            <item name="android:paddingStart">24dp</item>
+            <item name="android:paddingEnd">24dp</item>
+            <item name="android:paddingTop">12dp</item>
+            <item name="android:paddingBottom">12dp</item>
+            <item name="cornerRadius">12dp</item>
+        </style>
+
+        <!-- Бирюзовая (главная) -->
+        <style name="ButtonPrimary" parent="BaseMaterialButton">
+            <item name="backgroundTint">#A26BE8</item>
+        </style>
+
+        <!-- Розовая (акцент) -->
+        <style name="ButtonAccent" parent="BaseMaterialButton">
+            <item name="backgroundTint">#BA69A0</item>
+        </style>
+
+        <!-- Фиолетовая (премиум) -->
+        <style name="ButtonPremium" parent="BaseMaterialButton">
+            <item name="backgroundTint">#57C741</item>
+        </style>
+
+        <!-- Салатовая (успех) -->
+        <style name="ButtonSuccess" parent="BaseMaterialButton">
+            <item name="backgroundTint">#94C14F</item>
+        </style>
+
+        <!-- Терракотовая (опасность/удаление) -->
+        <style name="ButtonDanger" parent="BaseMaterialButton">
+            <item name="backgroundTint">#A12D06</item>
+        </style>
+
+    <!-- 1. ПРОЗРАЧНАЯ КНОПКА (только текст) -->
+        <style name="ButtonTextOnly" parent="Widget.Material3.Button.TextButton">
+            <item name="android:textColor">#16AC81</item>
+            <item name="android:textSize">14sp</item>
+            <item name="android:textStyle">bold</item>
+            <item name="android:padding">12dp</item>
+        </style>
+
+    <!-- 2. ПРОЗРАЧНАЯ КНОПКА С РАМКОЙ (только контур) -->
+    <style name="ButtonTransparentBordered" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:textColor">#16AC81</item>
+        <item name="strokeColor">#16AC81</item>
+        <item name="strokeWidth">2dp</item>
+        <item name="cornerRadius">20dp</item>
+        <item name="android:paddingStart">24dp</item>
+        <item name="android:paddingEnd">24dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+    </style>
+
+    <!-- 3. СИЛЬНО СКРУГЛЁННАЯ КНОПКА (капсула) -->
+    <style name="ButtonCapsule" parent="BaseMaterialButton">
+        <item name="cornerRadius">50dp</item>
+        <item name="backgroundTint">#16AC81</item>
+        <item name="android:paddingStart">32dp</item>
+        <item name="android:paddingEnd">32dp</item>
+    </style>
+
+    <!-- 4. МАЛЕНЬКАЯ КНОПКА (компактная) -->
+    <style name="ButtonSmall" parent="BaseMaterialButton">
+        <item name="backgroundTint">#16AC81</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:paddingStart">16dp</item>
+        <item name="android:paddingEnd">16dp</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:paddingBottom">6dp</item>
+        <item name="cornerRadius">8dp</item>
+    </style>
+
+    <!-- 5. КНОПКА С ИКОНКОЙ СПРАВА -->
+    <style name="ButtonWithIcon" parent="BaseMaterialButton">
+        <item name="backgroundTint">#16AC81</item>
+        <item name="iconGravity">textEnd</item>
+        <item name="iconPadding">12dp</item>
+    </style>
+
+    <!-- 7. МНОГОСЛОЙНАЯ КНОПКА (с обводкой и фоном) -->
+    <style name="ButtonDoubleLayer" parent="BaseMaterialButton">
+        <item name="backgroundTint">#ffffff</item>
+        <item name="strokeColor">#16AC81</item>
+        <item name="strokeWidth">2dp</item>
+        <item name="android:textColor">#16AC81</item>
+        <item name="cornerRadius">12dp</item>
+    </style>
+
+</resources>
