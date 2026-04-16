@@ -13,7 +13,7 @@
         android:id="@+id/appbar_settings"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
+        android:background="@color/button_primary_gradient_end"
         app:elevation="4dp">
 
         <androidx.appcompat.widget.Toolbar
@@ -112,28 +112,23 @@
 
                                 <com.google.android.material.button.MaterialButton
                                     android:id="@+id/btn_pick_avatar"
-                                    style="@style/Widget.Material3.Button.OutlinedButton"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
+                                    style="@style/Button.Secondary"
                                     android:text="@string/change_avatar" />
 
                                 <com.google.android.material.button.MaterialButton
                                     android:id="@+id/btn_system_avatar"
-                                    style="@style/Widget.Material3.Button.TextButton"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:text="@string/use_system_avatar" />
+                                    style="@style/Button.Text"
+                                    android:text="@string/use_system_avatar"
+                                    android:layout_width="match_parent"/>
                             </LinearLayout>
                         </LinearLayout>
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_logout"
-                            style="@style/Widget.Material3.Button.TextButton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                            style="@style/Button.Text"
                             android:layout_gravity="end"
                             android:layout_marginTop="8dp"
-                            android:text="@string/logout" />
+                            android:text="@string/logout"/>
                     </LinearLayout>
 
                     <LinearLayout
@@ -183,8 +178,7 @@
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/btn_create_account"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            style="@style/Button.Primary"
                             android:layout_marginTop="12dp"
                             android:text="@string/create_account" />
                     </LinearLayout>

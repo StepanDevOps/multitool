@@ -13,7 +13,7 @@
         android:id="@+id/appbar_extensions_shop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
+        android:background="@color/button_primary_gradient_end"
         app:elevation="4dp">
 
         <androidx.appcompat.widget.Toolbar
