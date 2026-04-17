@@ -25,17 +25,15 @@
             tools:ignore="MissingConstraints">
 
             <com.google.android.material.chip.Chip
-                style="@style/Widget.Material3.Chip.Assist"
+                style="@style/Chip.Assist"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="10sp"
                 android:text="@string/category_productivity" />
 
             <com.google.android.material.chip.Chip
-                style="@style/Widget.Material3.Chip.Assist"
+                style="@style/Chip.Assist"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="10sp"
                 android:text="@string/category_education" />
         </com.google.android.material.chip.ChipGroup>
 
@@ -90,10 +88,15 @@
             </LinearLayout>
         </LinearLayout>
 
+        <!-- Распорка: занимает всё свободное пространство и толкает кнопку вниз -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_open_extension"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="@style/Button.Secondary"
             android:layout_marginTop="10dp"
             android:text="@string/extension_open" />
     </LinearLayout>

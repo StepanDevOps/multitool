@@ -29,7 +29,7 @@
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chip_category_all"
-                style="@style/Widget.Material3.Chip.Filter"
+                style="@style/Chip.Filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="true"
@@ -37,42 +37,42 @@
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chip_category_productivity"
-                style="@style/Widget.Material3.Chip.Filter"
+                style="@style/Chip.Filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/category_productivity" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chip_category_personalization"
-                style="@style/Widget.Material3.Chip.Filter"
+                style="@style/Chip.Filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/category_personalization" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chip_category_education"
-                style="@style/Widget.Material3.Chip.Filter"
+                style="@style/Chip.Filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/category_education" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chip_category_media"
-                style="@style/Widget.Material3.Chip.Filter"
+                style="@style/Chip.Filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/category_media" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chip_category_utilities"
-                style="@style/Widget.Material3.Chip.Filter"
+                style="@style/Chip.Filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/category_utilities" />
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/chip_category_other"
-                style="@style/Widget.Material3.Chip.Filter"
+                style="@style/Chip.Filter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/category_other" />
