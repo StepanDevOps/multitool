@@ -24,14 +24,11 @@ public class SettingsPresenter extends BasePresenter<SettingsContract.View>
     private final SettingsRepository repository;
 
     /**
-     * Презентеру передаём контекст и ID текущего пользователя.
-     * Он создаёт SettingsRepository, который объединяет SharedPreferences и Room.
-     *
-     * @param context контекст приложения
-     * @param currentUserId ID текущего пользователя, или -1 если не авторизован
+     * Презентеру передаём контекст приложения.
+     * Авторизация пока отключена, поэтому настройки храним как глобальные.
      */
-    public SettingsPresenter(Context context, int currentUserId) {
-        this.repository = new SettingsRepository(context, currentUserId);
+    public SettingsPresenter(Context context) {
+        this.repository = new SettingsRepository(context);
     }
 
     /**

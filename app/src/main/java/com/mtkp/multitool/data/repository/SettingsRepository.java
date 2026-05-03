@@ -9,6 +9,9 @@ import com.mtkp.multitool.data.local.SettingsDao;
 import com.mtkp.multitool.data.local.SettingsEntity;
 import com.mtkp.multitool.data.settings.SettingsStorage;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 /**
  * SettingsRepository — каталог доступа к настройкам приложения.
  *
@@ -28,18 +31,18 @@ public class SettingsRepository {
 
     private final SettingsStorage settingsStorage;
     private final SettingsDao settingsDao;
-    private final int currentUserId; // ID текущего пользователя (или -1, если не вошёл)
+    // Один поток гарантирует последовательную запись настроек в БД без гонок.
+    private final ExecutorService dbExecutor;
 
     /**
      * Создать репозиторий с доступом к обоим хранилищам.
      *
      * @param context контекст приложения для создания SharedPreferences и БД
-     * @param currentUserId ID текущего пользователя, или -1 если не авторизован
      */
-    public SettingsRepository(Context context, int currentUserId) {
+    public SettingsRepository(Context context) {
         this.settingsStorage = new SettingsStorage(context);
         this.settingsDao = AppDatabase.getInstance(context).settingsDao();
-        this.currentUserId = currentUserId;
+        this.dbExecutor = Executors.newSingleThreadExecutor();
     }
 
     // ========== ТЕМА ==========
@@ -150,7 +153,8 @@ public class SettingsRepository {
      */
     public void clearLocalAccount() {
         settingsStorage.clearLocalAccount();
-        // Можно также очистить некоторые записи из Room или оставить их для истории
+        saveSettingToDb("username", "");
+        saveSettingToDb("account_created", "false");
     }
 
     // ========== ВСПОМОГАТЕЛЬНЫЕ МЕТОДЫ ==========
@@ -163,16 +167,19 @@ public class SettingsRepository {
      * @param value значение настройки
      */
     private void saveSettingToDb(String key, String value) {
-        // Запускаем асинхронное сохранение, чтобы не блокировать UI
-        new Thread(() -> {
+        // Пишем в одном потоке: так не появятся дубликаты из параллельных вызовов.
+        dbExecutor.execute(() -> {
+            // Пока авторизация не подключена: храним только глобальные настройки.
+            settingsDao.deleteByKey(key);
+
             SettingsEntity setting = new SettingsEntity();
             setting.key = key;
             setting.value = value;
-            setting.userId = currentUserId > 0 ? currentUserId : null; // null для глобальных настроек
+            setting.userId = null;
             setting.lastUpdated = System.currentTimeMillis();
 
             settingsDao.insertOrReplace(setting);
-        }).start();
+        });
     }
 
     /**

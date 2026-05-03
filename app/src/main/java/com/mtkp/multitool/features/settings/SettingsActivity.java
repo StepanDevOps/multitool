@@ -65,11 +65,8 @@ public class SettingsActivity extends AppCompatActivity implements SettingsContr
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_settings);
 
-        // Создаём презентер с контекстом приложения и текущим ID пользователя.
-        // currentUserId = -1 означает, что пользователь не авторизован.
-        // В будущем здесь будет получение реального ID из БД.
-        int currentUserId = -1; // TODO: получить ID текущего пользователя из БД/SharedPref
-        presenter = new SettingsPresenter(getApplicationContext(), currentUserId);
+        // Авторизация пока не подключена: настройки сохраняются как глобальные.
+        presenter = new SettingsPresenter(getApplicationContext());
         presenter.attachView(this);
 
         initViews();
@@ -195,8 +192,7 @@ public class SettingsActivity extends AppCompatActivity implements SettingsContr
         String[] avatars = {
                 getString(R.string.avatar_default),
                 getString(R.string.avatar_star),
-                getString(R.string.avatar_home),
-                getString(R.string.avatar_notes)
+                getString(R.string.avatar_home)
         };
 
         new AlertDialog.Builder(this)
