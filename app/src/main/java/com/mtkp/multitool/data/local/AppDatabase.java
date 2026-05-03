@@ -37,41 +37,49 @@ public abstract class AppDatabase extends RoomDatabase {
      * Позже здесь будет UserDao с методами insert, update, delete, query и т.д.
      */
     // public abstract UserDao userDao();
+    public abstract UserDao userDao();
 
     /**
      * Получить DAO для работы с расширениями из магазина.
      */
     // public abstract ExtensionDao extensionDao();
+    public abstract ExtensionDao extensionDao();
 
     /**
      * Получить DAO для работы с установленными расширениями пользователя.
      */
     // public abstract InstalledExtensionDao installedExtensionDao();
+    public abstract InstalledExtensionDao installedExtensionDao();
 
     /**
      * Получить DAO для работы с категориями.
      */
     // public abstract CategoryDao categoryDao();
+    public abstract CategoryDao categoryDao();
 
     /**
      * Получить DAO для работы со связми Extension-Category.
      */
     // public abstract ExtensionCategoryCrossRefDao extensionCategoryCrossRefDao();
+    public abstract ExtensionCategoryCrossRefDao extensionCategoryCrossRefDao();
 
     /**
      * Получить DAO для работы с версиями расширений.
      */
     // public abstract ExtensionVersionDao extensionVersionDao();
+    public abstract ExtensionVersionDao extensionVersionDao();
 
     /**
      * Получить DAO для работы с локальными метаданными расширений.
      */
     // public abstract LocalExtensionMetaDao localExtensionMetaDao();
+    public abstract LocalExtensionMetaDao localExtensionMetaDao();
 
     /**
      * Получить DAO для работы с настройками приложения.
      */
     // public abstract SettingsDao settingsDao();
+    public abstract SettingsDao settingsDao();
 
     // === СИНГЛТОН ПАТТЕРН ДЛЯ ИНИЦИАЛИЗАЦИИ БД ===
 
