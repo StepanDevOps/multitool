@@ -1,16 +1,19 @@
 package com.mtkp.multitool.features.settings;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.util.Patterns;
 
 import com.mtkp.multitool.core.BasePresenter;
-import com.mtkp.multitool.data.settings.SettingsStorage;
+import com.mtkp.multitool.data.repository.SettingsRepository;
 
 /**
  * Презентер экрана настроек.
  * <p>
  * Он принимает действия пользователя, проверяет введённые данные,
- * сохраняет их в локальное хранилище и говорит View, что нужно показать.
+ * сохраняет их через SettingsRepository в локальное хранилище (SharedPreferences)
+ * и долгосрочное хранилище (Room).
+ * Затем говорит View, что нужно обновиться.
  */
 public class SettingsPresenter extends BasePresenter<SettingsContract.View>
         implements SettingsContract.Presenter {
@@ -18,13 +21,17 @@ public class SettingsPresenter extends BasePresenter<SettingsContract.View>
     private static final int USERNAME_MIN_LEN = 3;
     private static final int USERNAME_MAX_LEN = 20;
 
-    private final SettingsStorage storage;
+    private final SettingsRepository repository;
 
     /**
-     * Презентеру передаём хранилище, чтобы он мог читать и сохранять настройки.
+     * Презентеру передаём контекст и ID текущего пользователя.
+     * Он создаёт SettingsRepository, который объединяет SharedPreferences и Room.
+     *
+     * @param context контекст приложения
+     * @param currentUserId ID текущего пользователя, или -1 если не авторизован
      */
-    public SettingsPresenter(SettingsStorage storage) {
-        this.storage = storage;
+    public SettingsPresenter(Context context, int currentUserId) {
+        this.repository = new SettingsRepository(context, currentUserId);
     }
 
     /**
@@ -36,23 +43,24 @@ public class SettingsPresenter extends BasePresenter<SettingsContract.View>
             return;
         }
         view.showCurrentSettings(
-                storage.getThemeMode(),
-                storage.getLanguageTag(),
-                storage.getUserName(),
-                storage.getAvatarResId(),
-                storage.isAccountCreated()
+                repository.getThemeMode(),
+                repository.getLanguageTag(),
+                repository.getUserName(),
+                repository.getAvatarResId(),
+                repository.isAccountCreated()
         );
     }
 
     /**
      * Сохраняем и применяем тему, которую выбрал пользователь.
+     * Репозиторий автоматически сохранит в SharedPreferences и Room.
      */
     @Override
     public void onThemeSelected(int themeMode) {
-        if (storage.getThemeMode() == themeMode) {
+        if (repository.getThemeMode() == themeMode) {
             return;
         }
-        storage.setThemeMode(themeMode);
+        repository.setThemeMode(themeMode);
         if (isViewAttached()) {
             view.applyTheme(themeMode);
         }
@@ -60,13 +68,14 @@ public class SettingsPresenter extends BasePresenter<SettingsContract.View>
 
     /**
      * Сохраняем язык и просим экран обновиться.
+     * Репозиторий сохранит в оба хранилища.
      */
     @Override
     public void onLanguageSelected(String languageTag) {
-        if (languageTag == null || languageTag.equals(storage.getLanguageTag())) {
+        if (languageTag == null || languageTag.equals(repository.getLanguageTag())) {
             return;
         }
-        storage.setLanguageTag(languageTag);
+        repository.setLanguageTag(languageTag);
         if (isViewAttached()) {
             view.applyLanguage(languageTag);
         }
@@ -79,7 +88,7 @@ public class SettingsPresenter extends BasePresenter<SettingsContract.View>
     public void onUserNameChanged(String userName) {
         String normalized = userName == null ? "" : userName.trim();
         if (normalized.isEmpty()) {
-            storage.setUserName("");
+            repository.setUserName("");
             if (isViewAttached()) {
                 view.clearUserNameError();
             }
@@ -93,7 +102,7 @@ public class SettingsPresenter extends BasePresenter<SettingsContract.View>
             return;
         }
 
-        storage.setUserName(normalized);
+        repository.setUserName(normalized);
         if (isViewAttached()) {
             view.clearUserNameError();
         }
@@ -104,7 +113,7 @@ public class SettingsPresenter extends BasePresenter<SettingsContract.View>
      */
     @Override
     public void onAvatarSelected(int avatarResId) {
-        storage.setAvatarResId(avatarResId);
+        repository.setAvatarResId(avatarResId);
         if (isViewAttached()) {
             view.updateAvatarPreview(avatarResId);
         }
@@ -136,7 +145,7 @@ public class SettingsPresenter extends BasePresenter<SettingsContract.View>
             return;
         }
 
-        storage.setAccountCreated(true);
+        repository.setAccountCreated(true);
         if (isViewAttached()) {
             view.showAccountCreatedState(true);
             view.showAccountCreatedMessage();
@@ -148,14 +157,14 @@ public class SettingsPresenter extends BasePresenter<SettingsContract.View>
      */
     @Override
     public void onLogoutClicked() {
-        storage.clearLocalAccount();
+        repository.clearLocalAccount();
         if (isViewAttached()) {
             view.showCurrentSettings(
-                    storage.getThemeMode(),
-                    storage.getLanguageTag(),
-                    storage.getUserName(),
-                    storage.getAvatarResId(),
-                    storage.isAccountCreated()
+                    repository.getThemeMode(),
+                    repository.getLanguageTag(),
+                    repository.getUserName(),
+                    repository.getAvatarResId(),
+                    repository.isAccountCreated()
             );
             view.showLoggedOutMessage();
         }

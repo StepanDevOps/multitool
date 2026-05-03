@@ -26,7 +26,6 @@ import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputLayout;
 import com.mtkp.multitool.R;
-import com.mtkp.multitool.data.settings.SettingsStorage;
 
 /**
  * Экран настроек приложения.
@@ -57,8 +56,7 @@ public class SettingsActivity extends AppCompatActivity implements SettingsContr
     private final int[] avatarResIds = {
             R.drawable.ic_account_box,
             R.drawable.ic_favorite,
-            R.drawable.ic_home,
-            R.drawable.ic_notes
+            R.drawable.ic_home
     };
 
     @Override
@@ -67,7 +65,11 @@ public class SettingsActivity extends AppCompatActivity implements SettingsContr
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_settings);
 
-        presenter = new SettingsPresenter(new SettingsStorage(getApplicationContext()));
+        // Создаём презентер с контекстом приложения и текущим ID пользователя.
+        // currentUserId = -1 означает, что пользователь не авторизован.
+        // В будущем здесь будет получение реального ID из БД.
+        int currentUserId = -1; // TODO: получить ID текущего пользователя из БД/SharedPref
+        presenter = new SettingsPresenter(getApplicationContext(), currentUserId);
         presenter.attachView(this);
 
         initViews();
