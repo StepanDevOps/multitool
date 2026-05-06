@@ -47,6 +47,8 @@
     <string name="choose_avatar">Choose avatar</string>
 
     <string name="create_account">Create account</string>
+    <string name="login_account">Login</string>
+    <string name="delete_account">Delete account</string>
     <string name="email_hint">Email</string>
     <string name="password_hint">Password</string>
     <string name="confirm_password_hint">Confirm password</string>

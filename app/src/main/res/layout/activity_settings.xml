@@ -129,6 +129,13 @@
                             android:layout_gravity="end"
                             android:layout_marginTop="8dp"
                             android:text="@string/logout"/>
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_delete_account"
+                            style="@style/Button.Text"
+                            android:layout_gravity="end"
+                            android:layout_marginTop="8dp"
+                            android:text="@string/delete_account"/>
                     </LinearLayout>
 
                     <LinearLayout
@@ -181,6 +188,12 @@
                             style="@style/Button.Primary"
                             android:layout_marginTop="12dp"
                             android:text="@string/create_account" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btn_login"
+                            style="@style/Button.Secondary"
+                            android:layout_marginTop="12dp"
+                            android:text="@string/login_account" />
                     </LinearLayout>
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>

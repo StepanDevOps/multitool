@@ -39,6 +39,7 @@
     <string name="choose_avatar">Выбор аватара</string>
 
     <string name="create_account">Создать аккаунт</string>
+    <string name="login_account">Войти</string>
     <string name="email_hint">Email</string>
     <string name="password_hint">Пароль</string>
     <string name="confirm_password_hint">Подтвердите пароль</string>
@@ -46,6 +47,7 @@
     <string name="logged_out_local">Вы вышли из профиля</string>
     <string name="account_not_created">Аккаунт не создан</string>
     <string name="logout">Выйти</string>
+    <string name="delete_account">Удалить аккаунт</string>
     <string name="already_on_settings_screen">Вы уже на экране настроек</string>
     <string name="user_name_error_length">Имя должно быть от 3 до 20 символов</string>
     <string name="error_invalid_email">Введите корректный email</string>
