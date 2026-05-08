@@ -21,9 +21,10 @@ import androidx.room.RoomDatabase;
         InstalledExtensionEntity.class,
         LocalExtensionMetaEntity.class,
         SettingsEntity.class,
-        com.mtkp.multitool.data.local.CachedExtensionEntity.class
+        com.mtkp.multitool.data.local.CachedExtensionEntity.class,
+        com.mtkp.multitool.data.local.CachedCategoryEntity.class
     },
-    version = 3,
+    version = 2,
     exportSchema = false  // false = не экспортировать schema в JSON для отладки
 )
 public abstract class AppDatabase extends RoomDatabase {
@@ -45,6 +46,11 @@ public abstract class AppDatabase extends RoomDatabase {
 
     // DAO для кеша расширений (локальный кэш удалённого каталога)
     public abstract CachedExtensionDao cachedExtensionDao();
+
+    /**
+     * Получить DAO для кеша категорий.
+     */
+    public abstract CachedCategoryDao cachedCategoryDao();
 
     // === СИНГЛТОН ПАТТЕРН ДЛЯ ИНИЦИАЛИЗАЦИИ БД ===
 

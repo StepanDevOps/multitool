@@ -12,7 +12,7 @@ public class ExtensionDto {
     public String shortDescription;
     public String detailedDescription;
     public String authorName; // автор как строка для простоты
-    public String logoUrl;
+    public String extensionPath; // путь к файлу на сервере (например, /extensions/calculator.jar)
     public List<String> categories;
     public String version;
     public long downloads;

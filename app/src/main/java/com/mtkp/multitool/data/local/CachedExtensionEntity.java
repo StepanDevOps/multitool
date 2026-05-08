@@ -19,7 +19,7 @@ public class CachedExtensionEntity {
 
     public String shortDescription;
 
-    public String logoUrl;
+    public String extensionPath; // путь к файлу на сервере
 
     public String categoriesCsv; // простой список категорий через запятую
 

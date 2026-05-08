@@ -23,6 +23,7 @@ public class SettingsStorage {
     private static final String KEY_USER_NAME = "user_name";
     private static final String KEY_AVATAR_RES_ID = "avatar_res_id";
     private static final String KEY_ACCOUNT_CREATED = "account_created";
+    private static final String KEY_AUTH_TOKEN = "auth_token";
 
     private final SharedPreferences prefs;
 
@@ -98,6 +99,20 @@ public class SettingsStorage {
     }
 
     /**
+     * Получить JWT токен для авторизованных запросов.
+     */
+    public String getAuthToken() {
+        return prefs.getString(KEY_AUTH_TOKEN, "");
+    }
+
+    /**
+     * Сохранить JWT токен после логина/регистрации.
+     */
+    public void setAuthToken(String token) {
+        prefs.edit().putString(KEY_AUTH_TOKEN, token == null ? "" : token).apply();
+    }
+
+    /**
      * Сохранить факт создания локального аккаунта.
      */
     public void setAccountCreated(boolean accountCreated) {
@@ -111,6 +126,7 @@ public class SettingsStorage {
         prefs.edit()
                 .putBoolean(KEY_ACCOUNT_CREATED, false)
                 .putString(KEY_USER_NAME, "")
+                .putString(KEY_AUTH_TOKEN, "")
                 .putInt(KEY_AVATAR_RES_ID, R.drawable.ic_account_box)
                 .apply();
     }

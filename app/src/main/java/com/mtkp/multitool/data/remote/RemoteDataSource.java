@@ -1,30 +1,196 @@
 package com.mtkp.multitool.data.remote;
 
-import com.mtkp.multitool.data.remote.dto.ExtensionDto;
+import android.content.Context;
 
-import java.util.ArrayList;
+import com.mtkp.multitool.data.remote.dto.AuthDto;
+import com.mtkp.multitool.data.remote.dto.AuthLoginRequestDto;
+import com.mtkp.multitool.data.remote.dto.AuthRegisterRequestDto;
+import com.mtkp.multitool.data.remote.dto.AuthVerifyResponseDto;
+import com.mtkp.multitool.data.remote.dto.CategoryDto;
+import com.mtkp.multitool.data.remote.dto.CategoriesResponseDto;
+import com.mtkp.multitool.data.remote.dto.CreateExtensionRequestDto;
+import com.mtkp.multitool.data.remote.dto.CreateInstalledExtensionRequestDto;
+import com.mtkp.multitool.data.remote.dto.ExtensionDto;
+import com.mtkp.multitool.data.remote.dto.ExtensionMetaDto;
+import com.mtkp.multitool.data.remote.dto.ExtensionsListResponseDto;
+import com.mtkp.multitool.data.remote.dto.InstalledExtensionDto;
+import com.mtkp.multitool.data.remote.dto.InstalledExtensionsResponseDto;
+import com.mtkp.multitool.data.remote.dto.UpdateInstalledExtensionRequestDto;
+import com.mtkp.multitool.data.remote.dto.UploadVersionResponseDto;
+import com.mtkp.multitool.data.remote.network.ApiClient;
+import com.mtkp.multitool.data.remote.network.BackendApiService;
+
+import java.io.File;
 import java.util.List;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import retrofit2.Response;
+
 /**
- * Заглушка для удалённого источника данных.
- * Пока реализована простая синхронная заглушка — позже сюда можно подключить Retrofit.
+ * Реализация удалённого источника данных через Retrofit.
+ * Внешний код работает с абстракцией ExtensionsApi и не зависит от Retrofit напрямую.
  */
 public class RemoteDataSource implements ExtensionsApi {
 
-    public RemoteDataSource() {
-        // TODO: инициализация сети (Retrofit/OkHttp) — пока заглушка
+    private final BackendApiService api;
+
+    public RemoteDataSource(Context context) {
+        this.api = new ApiClient(context).service();
     }
 
     @Override
-    public List<ExtensionDto> fetchExtensions(int page, int perPage) throws Exception {
-        // TODO: сделать реальный сетевой запрос. Сейчас возвращаем пустой список для разработки.
-        return new ArrayList<>();
+    public AuthDto register(String username, String email, String password) throws Exception {
+        AuthRegisterRequestDto body = new AuthRegisterRequestDto(username, email, password);
+        return bodyOrThrow(api.register(body).execute(), "register");
+    }
+
+    @Override
+    public AuthDto login(String email, String password) throws Exception {
+        AuthLoginRequestDto body = new AuthLoginRequestDto(email, password);
+        return bodyOrThrow(api.login(body).execute(), "login");
+    }
+
+    @Override
+    public AuthVerifyResponseDto verifyToken() throws Exception {
+        return bodyOrThrow(api.verifyToken().execute(), "verify token");
+    }
+
+    @Override
+    public List<ExtensionDto> fetchExtensions(
+            int page,
+            int perPage,
+            String category,
+            String sort,
+            String search
+    ) throws Exception {
+        ExtensionsListResponseDto response = bodyOrThrow(
+                api.getExtensions(page, perPage, category, sort, search).execute(),
+                "get extensions"
+        );
+        return response.data;
     }
 
     @Override
     public ExtensionDto fetchExtensionById(int id) throws Exception {
-        // TODO: реальная загрузка расширения
-        return null;
+        return bodyOrThrow(api.getExtensionById(id).execute(), "get extension by id");
+    }
+
+    @Override
+    public ExtensionMetaDto fetchExtensionMeta(int id) throws Exception {
+        return bodyOrThrow(api.getExtensionMeta(id).execute(), "get extension meta");
+    }
+
+    @Override
+    public List<CategoryDto> fetchCategories() throws Exception {
+        CategoriesResponseDto response = bodyOrThrow(api.getCategories().execute(), "get categories");
+        return response.data;
+    }
+
+    @Override
+    public List<InstalledExtensionDto> fetchInstalledExtensions(int userId) throws Exception {
+        InstalledExtensionsResponseDto response = bodyOrThrow(
+                api.getInstalledExtensions(userId).execute(),
+                "get installed extensions"
+        );
+        return response.data;
+    }
+
+    @Override
+    public InstalledExtensionDto createInstalledExtension(
+            int userId,
+            int extensionId,
+            String installedVersion
+    ) throws Exception {
+        CreateInstalledExtensionRequestDto body =
+                new CreateInstalledExtensionRequestDto(extensionId, installedVersion);
+        return bodyOrThrow(
+                api.createInstalledExtension(userId, body).execute(),
+                "create installed extension"
+        );
+    }
+
+    @Override
+    public InstalledExtensionDto updateInstalledExtension(
+            int userId,
+            int installedId,
+            Boolean isEnabled,
+            String installedVersion
+    ) throws Exception {
+        UpdateInstalledExtensionRequestDto body =
+                new UpdateInstalledExtensionRequestDto(isEnabled, installedVersion);
+        return bodyOrThrow(
+                api.updateInstalledExtension(userId, installedId, body).execute(),
+                "update installed extension"
+        );
+    }
+
+    @Override
+    public void deleteInstalledExtension(int userId, int installedId) throws Exception {
+        Response<Void> response = api.deleteInstalledExtension(userId, installedId).execute();
+        if (!response.isSuccessful()) {
+            throw new IllegalStateException("delete installed extension failed: HTTP " + response.code());
+        }
+    }
+
+    @Override
+    public ExtensionDto createExtension(
+            String name,
+            String shortDescription,
+            String detailedDescription,
+            List<String> categories
+    ) throws Exception {
+        CreateExtensionRequestDto body =
+                new CreateExtensionRequestDto(name, shortDescription, detailedDescription, categories);
+        return bodyOrThrow(api.createExtension(body).execute(), "create extension");
+    }
+
+    @Override
+    public UploadVersionResponseDto uploadVersion(
+            int extensionId,
+            String version,
+            String releaseNotes,
+            File jarFile,
+            String changelog
+    ) throws Exception {
+        RequestBody versionPart = RequestBody.create(version, MediaType.parse("text/plain"));
+        RequestBody notesPart = RequestBody.create(releaseNotes, MediaType.parse("text/plain"));
+        RequestBody changelogPart = RequestBody.create(
+                changelog == null ? "" : changelog,
+                MediaType.parse("text/plain")
+        );
+
+        RequestBody fileBody = RequestBody.create(
+                jarFile,
+                MediaType.parse("application/java-archive")
+        );
+        MultipartBody.Part filePart = MultipartBody.Part.createFormData(
+                "jarFile",
+                jarFile.getName(),
+                fileBody
+        );
+
+        return bodyOrThrow(
+                api.uploadVersion(extensionId, versionPart, notesPart, filePart, changelogPart).execute(),
+                "upload extension version"
+        );
+    }
+
+    @Override
+    public ResponseBody downloadExtension(int extensionId, String version) throws Exception {
+        return bodyOrThrow(api.downloadExtension(extensionId, version).execute(), "download extension");
+    }
+
+    private <T> T bodyOrThrow(Response<T> response, String operation) {
+        if (response.isSuccessful() && response.body() != null) {
+            return response.body();
+        }
+        throw new IllegalStateException(
+                operation + " failed: HTTP " + response.code() +
+                        (response.message() == null ? "" : " " + response.message())
+        );
     }
 }
 

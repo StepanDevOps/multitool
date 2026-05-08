@@ -1,0 +1,13 @@
+package com.mtkp.multitool.data.remote.dto;
+
+/**
+ * Ответ проверки токена.
+ */
+public class AuthVerifyResponseDto {
+    public boolean valid;
+    public int userId;
+    public long expiresAt;
+
+    public AuthVerifyResponseDto() { }
+}
+
