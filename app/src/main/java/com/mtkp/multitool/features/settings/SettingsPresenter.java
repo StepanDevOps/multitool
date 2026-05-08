@@ -154,7 +154,7 @@ public class SettingsPresenter extends BasePresenter<SettingsContract.View>
      */
     @Override
     public void onLogoutClicked() {
-        repository.clearLocalAccount();
+        repository.clearLocalAccount(); // Очищаем данные из model (метод из SettingsRepository)
         if (isViewAttached()) {
             view.showCurrentSettings(
                     repository.getThemeMode(),

@@ -1,32 +1,15 @@
 package com.mtkp.multitool.data.local;
 
 import androidx.room.Entity;
-import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 import androidx.annotation.NonNull;
 
 /**
- * Сущность InstalledExtension — связывает пользователя с установленными расширениями.
- * Хранит информацию об установленных у конкретного пользователя расширениях,
+ * Сущность InstalledExtension — хранит локально установленные расширения.
+ * Хранит информацию об установленных на устройстве расширениях,
  * включая их версию, дату установки и данные о размещении на UI сетке.
  */
-@Entity(
-    tableName = "installed_extensions",
-    foreignKeys = {
-        @ForeignKey(
-            entity = UserEntity.class,
-            parentColumns = "id",
-            childColumns = "userId",
-            onDelete = ForeignKey.CASCADE
-        ),
-        @ForeignKey(
-            entity = ExtensionEntity.class,
-            parentColumns = "id",
-            childColumns = "extensionId",
-            onDelete = ForeignKey.CASCADE
-        )
-    }
-)
+@Entity(tableName = "installed_extensions")
 public class InstalledExtensionEntity {
     
     /**
@@ -36,14 +19,8 @@ public class InstalledExtensionEntity {
     public int id;
     
     /**
-     * ID пользователя, которому принадлежит это расширение.
-     * Foreign Key к таблице users.
-     */
-    public int userId;
-    
-    /**
-     * ID расширения из таблицы extensions.
-     * Foreign Key к таблице extensions.
+     * Идентификатор расширения на удаленном сервере.
+     * Локально хранится без FK, потому что каталог расширений переехал в PostgreSQL.
      */
     public int extensionId;
     

@@ -5,12 +5,11 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 import androidx.room.Delete;
-import androidx.room.Transaction;
 
 import java.util.List;
 
 /**
- * DAO для работы с установленными расширениями пользователя.
+ * DAO для работы с установленными расширениями на устройстве.
  */
 @Dao
 public interface InstalledExtensionDao {
@@ -21,8 +20,6 @@ public interface InstalledExtensionDao {
     @Query("SELECT * FROM installed_extensions WHERE id = :id LIMIT 1")
     InstalledExtensionEntity getById(int id);
 
-    @Query("SELECT * FROM installed_extensions WHERE userId = :userId")
-    List<InstalledExtensionEntity> getByUserId(int userId);
 
     @Insert
     long insert(InstalledExtensionEntity installed);

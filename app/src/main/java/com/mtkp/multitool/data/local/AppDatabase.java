@@ -18,68 +18,33 @@ import androidx.room.RoomDatabase;
  */
 @Database(
     entities = {
-        UserEntity.class,
-        ExtensionEntity.class,
         InstalledExtensionEntity.class,
-        CategoryEntity.class,
-        ExtensionCategoryCrossRef.class,
-        ExtensionVersionEntity.class,
         LocalExtensionMetaEntity.class,
-        SettingsEntity.class
+        SettingsEntity.class,
+        com.mtkp.multitool.data.local.CachedExtensionEntity.class
     },
-    version = 1,
+    version = 3,
     exportSchema = false  // false = не экспортировать schema в JSON для отладки
 )
 public abstract class AppDatabase extends RoomDatabase {
 
     /**
-     * Получить DAO для работы с пользователями.
-     * Позже здесь будет UserDao с методами insert, update, delete, query и т.д.
+     * Получить DAO для работы с установленными расширениями.
      */
-    // public abstract UserDao userDao();
-    public abstract UserDao userDao();
-
-    /**
-     * Получить DAO для работы с расширениями из магазина.
-     */
-    // public abstract ExtensionDao extensionDao();
-    public abstract ExtensionDao extensionDao();
-
-    /**
-     * Получить DAO для работы с установленными расширениями пользователя.
-     */
-    // public abstract InstalledExtensionDao installedExtensionDao();
     public abstract InstalledExtensionDao installedExtensionDao();
-
-    /**
-     * Получить DAO для работы с категориями.
-     */
-    // public abstract CategoryDao categoryDao();
-    public abstract CategoryDao categoryDao();
-
-    /**
-     * Получить DAO для работы со связми Extension-Category.
-     */
-    // public abstract ExtensionCategoryCrossRefDao extensionCategoryCrossRefDao();
-    public abstract ExtensionCategoryCrossRefDao extensionCategoryCrossRefDao();
-
-    /**
-     * Получить DAO для работы с версиями расширений.
-     */
-    // public abstract ExtensionVersionDao extensionVersionDao();
-    public abstract ExtensionVersionDao extensionVersionDao();
 
     /**
      * Получить DAO для работы с локальными метаданными расширений.
      */
-    // public abstract LocalExtensionMetaDao localExtensionMetaDao();
     public abstract LocalExtensionMetaDao localExtensionMetaDao();
 
     /**
      * Получить DAO для работы с настройками приложения.
      */
-    // public abstract SettingsDao settingsDao();
     public abstract SettingsDao settingsDao();
+
+    // DAO для кеша расширений (локальный кэш удалённого каталога)
+    public abstract CachedExtensionDao cachedExtensionDao();
 
     // === СИНГЛТОН ПАТТЕРН ДЛЯ ИНИЦИАЛИЗАЦИИ БД ===
 
@@ -106,6 +71,7 @@ public abstract class AppDatabase extends RoomDatabase {
                     AppDatabase.class,                // класс БД
                     "multitool_db"                    // имя файла БД
                 )
+                .fallbackToDestructiveMigration()     // локальная схема изменилась, пересоздаём БД при апгрейде
                 .build();                             // собрать и создать БД
         }
         return instance;

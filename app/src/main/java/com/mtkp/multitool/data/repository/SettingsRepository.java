@@ -17,7 +17,7 @@ import java.util.concurrent.Executors;
  *
  * Этот класс объединяет два источника данных:
  * - SettingsStorage (SharedPreferences) — для быстрого доступа к оперативным данным (тема, язык)
- * - SettingsDao (Room) — для долгосрочного хранилища, истории, связи с пользователем
+ * - SettingsDao (Room) — для долгосрочного локального хранилища
  *
  * Архитектура:
  * - UI (Presenter) → SettingsRepository → {SettingsStorage + SettingsDao}
@@ -169,13 +169,12 @@ public class SettingsRepository {
     private void saveSettingToDb(String key, String value) {
         // Пишем в одном потоке: так не появятся дубликаты из параллельных вызовов.
         dbExecutor.execute(() -> {
-            // Пока авторизация не подключена: храним только глобальные настройки.
+            // Настройки локальные и не привязаны к users.
             settingsDao.deleteByKey(key);
 
             SettingsEntity setting = new SettingsEntity();
             setting.key = key;
             setting.value = value;
-            setting.userId = null;
             setting.lastUpdated = System.currentTimeMillis();
 
             settingsDao.insertOrReplace(setting);
