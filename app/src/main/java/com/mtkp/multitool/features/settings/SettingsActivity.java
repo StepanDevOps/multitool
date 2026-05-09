@@ -3,6 +3,7 @@ package com.mtkp.multitool.features.settings;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -34,6 +35,8 @@ import com.mtkp.multitool.R;
  * форма профиля и серверная авторизация/регистрация.
  */
 public class SettingsActivity extends AppCompatActivity implements SettingsContract.View {
+
+    private static final String TAG = "SettingsActivity";
 
     private SettingsPresenter presenter;
     private boolean isRestoringState;
@@ -180,17 +183,23 @@ public class SettingsActivity extends AppCompatActivity implements SettingsContr
                 showMessage(getString(R.string.system_avatar_unavailable)));
 
         MaterialButton btnCreateAccount = findViewById(R.id.btn_create_account);
-        btnCreateAccount.setOnClickListener(v -> presenter.onCreateAccountClicked(
-                etUserName.getText() == null ? "" : etUserName.getText().toString().trim(),
-                etEmail.getText() == null ? "" : etEmail.getText().toString().trim(),
-                etPassword.getText() == null ? "" : etPassword.getText().toString(),
-                etConfirmPassword.getText() == null ? "" : etConfirmPassword.getText().toString()
-        ));
+        btnCreateAccount.setOnClickListener(v -> {
+            Log.d(TAG, "Create account clicked");
+            presenter.onCreateAccountClicked(
+                    etUserName.getText() == null ? "" : etUserName.getText().toString().trim(),
+                    etEmail.getText() == null ? "" : etEmail.getText().toString().trim(),
+                    etPassword.getText() == null ? "" : etPassword.getText().toString(),
+                    etConfirmPassword.getText() == null ? "" : etConfirmPassword.getText().toString()
+            );
+        });
 
-        btnLogin.setOnClickListener(v -> presenter.onLoginClicked(
-                etEmail.getText() == null ? "" : etEmail.getText().toString().trim(),
-                etPassword.getText() == null ? "" : etPassword.getText().toString()
-        ));
+        btnLogin.setOnClickListener(v -> {
+            Log.d(TAG, "Login clicked");
+            presenter.onLoginClicked(
+                    etEmail.getText() == null ? "" : etEmail.getText().toString().trim(),
+                    etPassword.getText() == null ? "" : etPassword.getText().toString()
+            );
+        });
 
         MaterialButton btnLogout = findViewById(R.id.btn_logout);
         btnLogout.setOnClickListener(v -> presenter.onLogoutClicked());

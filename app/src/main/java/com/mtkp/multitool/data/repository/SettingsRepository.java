@@ -83,6 +83,7 @@ public class SettingsRepository {
      * @param callback обработчик результата
      */
     public void registerOnServer(String username, String email, String password, AuthCallback callback) {
+        Log.d(TAG, "registerOnServer start: username=" + username + ", email=" + email);
         networkExecutor.execute(() -> {
             try {
                 AuthDto authDto = remoteDataSource.register(username, email, password);
@@ -103,6 +104,7 @@ public class SettingsRepository {
      * @param callback обработчик результата
      */
     public void loginOnServer(String email, String password, AuthCallback callback) {
+        Log.d(TAG, "loginOnServer start: email=" + email);
         networkExecutor.execute(() -> {
             try {
                 AuthDto authDto = remoteDataSource.login(email, password);

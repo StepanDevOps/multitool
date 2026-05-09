@@ -3,6 +3,7 @@ package com.mtkp.multitool.features.settings;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.Patterns;
+import android.util.Log;
 
 import com.mtkp.multitool.core.BasePresenter;
 import com.mtkp.multitool.data.remote.dto.AuthDto;
@@ -18,6 +19,8 @@ import com.mtkp.multitool.data.repository.SettingsRepository;
  */
 public class SettingsPresenter extends BasePresenter<SettingsContract.View>
         implements SettingsContract.Presenter {
+
+    private static final String TAG = "SettingsPresenter";
 
     private static final int USERNAME_MIN_LEN = 3;
     private static final int USERNAME_MAX_LEN = 20;
@@ -124,11 +127,16 @@ public class SettingsPresenter extends BasePresenter<SettingsContract.View>
     public void onCreateAccountClicked(String userName, String email, String password, String confirmPassword) {
         String normalizedUserName = userName == null ? "" : userName.trim();
         String normalizedEmail = email == null ? "" : email.trim();
+        Log.d(TAG, "onCreateAccountClicked: usernameLen=" + normalizedUserName.length()
+                + ", email=" + normalizedEmail);
+
         if (normalizedUserName.length() < USERNAME_MIN_LEN || normalizedUserName.length() > USERNAME_MAX_LEN) {
-            if (isViewAttached()) {
-                view.showUserNameError();
+            if (!normalizedUserName.isEmpty()) {
+                if (isViewAttached()) {
+                    view.showUserNameError();
+                }
+                return;
             }
-            return;
         }
 
         if (!Patterns.EMAIL_ADDRESS.matcher(normalizedEmail).matches()) {
@@ -152,7 +160,14 @@ public class SettingsPresenter extends BasePresenter<SettingsContract.View>
             return;
         }
 
-        repository.registerOnServer(normalizedUserName, normalizedEmail, password, new SettingsRepository.AuthCallback() {
+        String finalUserName = normalizedUserName;
+        if (finalUserName.isEmpty()) {
+            int atIndex = normalizedEmail.indexOf('@');
+            finalUserName = atIndex > 0 ? normalizedEmail.substring(0, atIndex) : normalizedEmail;
+            Log.d(TAG, "onCreateAccountClicked: username fallback used -> " + finalUserName);
+        }
+
+        repository.registerOnServer(finalUserName, normalizedEmail, password, new SettingsRepository.AuthCallback() {
             @Override
             public void onSuccess(AuthDto authDto) {
                 if (!isViewAttached()) {

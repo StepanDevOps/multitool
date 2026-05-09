@@ -2,6 +2,9 @@ package com.mtkp.multitool.data.remote.network;
 
 import android.content.Context;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.mtkp.multitool.data.remote.deserializer.DateTimeDeserializer;
 import com.mtkp.multitool.data.settings.SettingsStorage;
 
 import okhttp3.OkHttpClient;
@@ -34,7 +37,7 @@ public class ApiClient {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create(createGson()))
                 .build();
 
         this.service = retrofit.create(BackendApiService.class);
@@ -42,6 +45,17 @@ public class ApiClient {
 
     public BackendApiService service() {
         return service;
+    }
+
+    /**
+     * Создаёт Gson с кастомным deserializer'ом для ISO-8601 дат в формате Long (миллисекунды).
+     * Это требуется для корректной десериализации поля `tokenExpiresAt` из API сервера,
+     * который возвращает даты в формате строк (например, "2026-05-10T19:03:41").
+     */
+    private static Gson createGson() {
+        return new GsonBuilder()
+                .registerTypeAdapter(Long.class, new DateTimeDeserializer())
+                .create();
     }
 }
 

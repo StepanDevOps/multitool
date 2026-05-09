@@ -9,7 +9,7 @@ public class AuthDto {
     public String username;
     public String email;
     public String token;
-    public long tokenExpiresAt;
+    public Long tokenExpiresAt;
 
     public AuthDto() { }
 }
