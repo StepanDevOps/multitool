@@ -52,8 +52,15 @@
     <string name="email_hint">Email</string>
     <string name="password_hint">Password</string>
     <string name="confirm_password_hint">Confirm password</string>
-    <string name="account_created_local">Local account created</string>
+    <string name="account_created_local">Account created</string>
+    <string name="logged_in_local">Logged in</string>
     <string name="logged_out_local">You have logged out</string>
+    <string name="auth_invalid_credentials">Invalid login or password</string>
+    <string name="auth_registration_failed">Could not create account. Check your data and try again.</string>
+    <string name="auth_account_exists">An account with this email or username already exists.</string>
+    <string name="auth_account_unavailable">Account is not available.</string>
+    <string name="auth_server_unavailable">Server is temporarily unavailable.</string>
+    <string name="auth_http_error">Authentication error. HTTP %1$d</string>
     <string name="account_not_created">Account not created</string>
     <string name="logout">Log out</string>
     <string name="already_on_settings_screen">You are already on settings screen</string>

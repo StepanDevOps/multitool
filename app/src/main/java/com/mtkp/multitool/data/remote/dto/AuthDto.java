@@ -5,7 +5,7 @@ package com.mtkp.multitool.data.remote.dto;
  * Используется при регистрации и входе.
  */
 public class AuthDto {
-    public int id;
+    public long id;
     public String username;
     public String email;
     public String token;

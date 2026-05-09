@@ -5,6 +5,7 @@ import android.text.TextUtils;
 import android.util.Patterns;
 
 import com.mtkp.multitool.core.BasePresenter;
+import com.mtkp.multitool.data.remote.dto.AuthDto;
 import com.mtkp.multitool.data.repository.SettingsRepository;
 
 /**
@@ -25,7 +26,7 @@ public class SettingsPresenter extends BasePresenter<SettingsContract.View>
 
     /**
      * Презентеру передаём контекст приложения.
-     * Авторизация пока отключена, поэтому настройки храним как глобальные.
+     * Через repository презентер работает и с локальными настройками, и с REST API авторизации.
      */
     public SettingsPresenter(Context context) {
         this.repository = new SettingsRepository(context);
@@ -44,7 +45,7 @@ public class SettingsPresenter extends BasePresenter<SettingsContract.View>
                 repository.getLanguageTag(),
                 repository.getUserName(),
                 repository.getAvatarResId(),
-                repository.isAccountCreated()
+                repository.isAuthenticated()
         );
     }
 
@@ -117,11 +118,20 @@ public class SettingsPresenter extends BasePresenter<SettingsContract.View>
     }
 
     /**
-     * Проверяем данные формы аккаунта и показываем результат.
+     * Проверяем данные формы регистрации и отправляем их на сервер.
      */
     @Override
-    public void onCreateAccountClicked(String email, String password, String confirmPassword) {
-        if (!Patterns.EMAIL_ADDRESS.matcher(email == null ? "" : email.trim()).matches()) {
+    public void onCreateAccountClicked(String userName, String email, String password, String confirmPassword) {
+        String normalizedUserName = userName == null ? "" : userName.trim();
+        String normalizedEmail = email == null ? "" : email.trim();
+        if (normalizedUserName.length() < USERNAME_MIN_LEN || normalizedUserName.length() > USERNAME_MAX_LEN) {
+            if (isViewAttached()) {
+                view.showUserNameError();
+            }
+            return;
+        }
+
+        if (!Patterns.EMAIL_ADDRESS.matcher(normalizedEmail).matches()) {
             if (isViewAttached()) {
                 view.showInvalidEmailError();
             }
@@ -142,11 +152,76 @@ public class SettingsPresenter extends BasePresenter<SettingsContract.View>
             return;
         }
 
-        repository.setAccountCreated(true);
-        if (isViewAttached()) {
-            view.showAccountCreatedState(true);
-            view.showAccountCreatedMessage();
+        repository.registerOnServer(normalizedUserName, normalizedEmail, password, new SettingsRepository.AuthCallback() {
+            @Override
+            public void onSuccess(AuthDto authDto) {
+                if (!isViewAttached()) {
+                    return;
+                }
+                view.showCurrentSettings(
+                        repository.getThemeMode(),
+                        repository.getLanguageTag(),
+                        repository.getUserName(),
+                        repository.getAvatarResId(),
+                        repository.isAuthenticated()
+                );
+                view.showAccountCreatedMessage();
+            }
+
+            @Override
+            public void onError(String message) {
+                if (!isViewAttached()) {
+                    return;
+                }
+                view.showError(message);
+            }
+        });
+    }
+
+    /**
+     * Проверяем данные формы входа и отправляем их на сервер.
+     */
+    @Override
+    public void onLoginClicked(String email, String password) {
+        String normalizedEmail = email == null ? "" : email.trim();
+        if (!Patterns.EMAIL_ADDRESS.matcher(normalizedEmail).matches()) {
+            if (isViewAttached()) {
+                view.showInvalidEmailError();
+            }
+            return;
         }
+
+        if (TextUtils.isEmpty(password) || password.length() < 6) {
+            if (isViewAttached()) {
+                view.showWeakPasswordError();
+            }
+            return;
+        }
+
+        repository.loginOnServer(normalizedEmail, password, new SettingsRepository.AuthCallback() {
+            @Override
+            public void onSuccess(AuthDto authDto) {
+                if (!isViewAttached()) {
+                    return;
+                }
+                view.showCurrentSettings(
+                        repository.getThemeMode(),
+                        repository.getLanguageTag(),
+                        repository.getUserName(),
+                        repository.getAvatarResId(),
+                        repository.isAuthenticated()
+                );
+                view.showLoggedInMessage();
+            }
+
+            @Override
+            public void onError(String message) {
+                if (!isViewAttached()) {
+                    return;
+                }
+                view.showError(message);
+            }
+        });
     }
 
     /**
@@ -161,7 +236,7 @@ public class SettingsPresenter extends BasePresenter<SettingsContract.View>
                     repository.getLanguageTag(),
                     repository.getUserName(),
                     repository.getAvatarResId(),
-                    repository.isAccountCreated()
+                    repository.isAuthenticated()
             );
             view.showLoggedOutMessage();
         }

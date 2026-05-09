@@ -5,7 +5,7 @@ package com.mtkp.multitool.data.remote.dto;
  */
 public class AuthVerifyResponseDto {
     public boolean valid;
-    public int userId;
+    public long userId;
     public long expiresAt;
 
     public AuthVerifyResponseDto() { }

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">bluetiful-cymophane293313.vm-host.com</domain>
+    </domain-config>
+</network-security-config>
+

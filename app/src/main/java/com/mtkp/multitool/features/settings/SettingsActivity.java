@@ -31,11 +31,11 @@ import com.mtkp.multitool.R;
  * Экран настроек приложения.
  *
  * Здесь находится только UI: переключатели темы и языка,
- * форма профиля и заглушка для создания локального аккаунта.
+ * форма профиля и серверная авторизация/регистрация.
  */
 public class SettingsActivity extends AppCompatActivity implements SettingsContract.View {
 
-    private SettingsContract.Presenter presenter;
+    private SettingsPresenter presenter;
     private boolean isRestoringState;
 
     private AppBarLayout appBarLayout;
@@ -52,6 +52,7 @@ public class SettingsActivity extends AppCompatActivity implements SettingsContr
     private EditText etEmail;
     private EditText etPassword;
     private EditText etConfirmPassword;
+    private MaterialButton btnLogin;
 
     private final int[] avatarResIds = {
             R.drawable.ic_account_box,
@@ -65,7 +66,7 @@ public class SettingsActivity extends AppCompatActivity implements SettingsContr
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_settings);
 
-        // Авторизация пока не подключена: настройки сохраняются как глобальные.
+        // Presenter сам ходит в repository: локальные настройки и серверная авторизация.
         presenter = new SettingsPresenter(getApplicationContext());
         presenter.attachView(this);
 
@@ -97,6 +98,7 @@ public class SettingsActivity extends AppCompatActivity implements SettingsContr
         etEmail = findViewById(R.id.et_email);
         etPassword = findViewById(R.id.et_password);
         etConfirmPassword = findViewById(R.id.et_confirm_password);
+        btnLogin = findViewById(R.id.btn_login);
     }
 
     private void setupToolbar() {
@@ -179,9 +181,15 @@ public class SettingsActivity extends AppCompatActivity implements SettingsContr
 
         MaterialButton btnCreateAccount = findViewById(R.id.btn_create_account);
         btnCreateAccount.setOnClickListener(v -> presenter.onCreateAccountClicked(
+                etUserName.getText() == null ? "" : etUserName.getText().toString().trim(),
                 etEmail.getText() == null ? "" : etEmail.getText().toString().trim(),
                 etPassword.getText() == null ? "" : etPassword.getText().toString(),
                 etConfirmPassword.getText() == null ? "" : etConfirmPassword.getText().toString()
+        ));
+
+        btnLogin.setOnClickListener(v -> presenter.onLoginClicked(
+                etEmail.getText() == null ? "" : etEmail.getText().toString().trim(),
+                etPassword.getText() == null ? "" : etPassword.getText().toString()
         ));
 
         MaterialButton btnLogout = findViewById(R.id.btn_logout);
@@ -304,6 +312,11 @@ public class SettingsActivity extends AppCompatActivity implements SettingsContr
     @Override
     public void showAccountCreatedMessage() {
         showMessage(getString(R.string.account_created_local));
+    }
+
+    @Override
+    public void showLoggedInMessage() {
+        showMessage(getString(R.string.logged_in_local));
     }
 
     @Override

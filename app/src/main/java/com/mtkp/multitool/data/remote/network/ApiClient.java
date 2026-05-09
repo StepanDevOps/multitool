@@ -16,7 +16,7 @@ public class ApiClient {
 
     // Для эмулятора Android Studio (если backend запущен локально на ПК):
     // private static final String BASE_URL = "http://10.0.2.2:8080/api/v1/";
-    private static final String BASE_URL = "https://bluetiful-cymophane293313.vm-host.com/api/v1/";
+    private static final String BASE_URL = "http://bluetiful-cymophane293313.vm-host.com:8090/api/v1/";
 
     private final BackendApiService service;
 

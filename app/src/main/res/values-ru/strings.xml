@@ -43,8 +43,15 @@
     <string name="email_hint">Email</string>
     <string name="password_hint">Пароль</string>
     <string name="confirm_password_hint">Подтвердите пароль</string>
-    <string name="account_created_local">Локальный аккаунт создан</string>
+    <string name="account_created_local">Аккаунт создан</string>
+    <string name="logged_in_local">Вход выполнен</string>
     <string name="logged_out_local">Вы вышли из профиля</string>
+    <string name="auth_invalid_credentials">Неверный логин или пароль</string>
+    <string name="auth_registration_failed">Не удалось создать аккаунт. Проверь данные и попробуй ещё раз.</string>
+    <string name="auth_account_exists">Пользователь с таким email или именем уже существует.</string>
+    <string name="auth_account_unavailable">Аккаунт недоступен.</string>
+    <string name="auth_server_unavailable">Сервер временно недоступен.</string>
+    <string name="auth_http_error">Ошибка авторизации. HTTP %1$d</string>
     <string name="account_not_created">Аккаунт не создан</string>
     <string name="logout">Выйти</string>
     <string name="delete_account">Удалить аккаунт</string>

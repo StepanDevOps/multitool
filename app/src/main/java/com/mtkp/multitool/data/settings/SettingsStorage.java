@@ -21,6 +21,8 @@ public class SettingsStorage {
     private static final String KEY_THEME_MODE = "theme_mode";
     private static final String KEY_LANGUAGE_TAG = "language_tag";
     private static final String KEY_USER_NAME = "user_name";
+    private static final String KEY_EMAIL = "email";
+    private static final String KEY_USER_ID = "user_id";
     private static final String KEY_AVATAR_RES_ID = "avatar_res_id";
     private static final String KEY_ACCOUNT_CREATED = "account_created";
     private static final String KEY_AUTH_TOKEN = "auth_token";
@@ -78,6 +80,34 @@ public class SettingsStorage {
     }
 
     /**
+     * Получить email текущего пользователя.
+     */
+    public String getEmail() {
+        return prefs.getString(KEY_EMAIL, "");
+    }
+
+    /**
+     * Сохранить email текущего пользователя.
+     */
+    public void setEmail(String email) {
+        prefs.edit().putString(KEY_EMAIL, email == null ? "" : email).apply();
+    }
+
+    /**
+     * Получить id текущего пользователя.
+     */
+    public long getUserId() {
+        return prefs.getLong(KEY_USER_ID, -1L);
+    }
+
+    /**
+     * Сохранить id текущего пользователя.
+     */
+    public void setUserId(long userId) {
+        prefs.edit().putLong(KEY_USER_ID, userId).apply();
+    }
+
+    /**
      * Получить выбранную иконку аватара.
      */
     public int getAvatarResId() {
@@ -126,6 +156,8 @@ public class SettingsStorage {
         prefs.edit()
                 .putBoolean(KEY_ACCOUNT_CREATED, false)
                 .putString(KEY_USER_NAME, "")
+                .putString(KEY_EMAIL, "")
+                .putLong(KEY_USER_ID, -1L)
                 .putString(KEY_AUTH_TOKEN, "")
                 .putInt(KEY_AVATAR_RES_ID, R.drawable.ic_account_box)
                 .apply();

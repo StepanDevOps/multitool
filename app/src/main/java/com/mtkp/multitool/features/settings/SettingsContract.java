@@ -69,9 +69,14 @@ public interface SettingsContract {
         void showPasswordMismatchError();
 
         /**
-         * Показать сообщение об успешном создании локального аккаунта.
+         * Показать сообщение об успешной регистрации аккаунта на сервере.
          */
         void showAccountCreatedMessage();
+
+        /**
+         * Показать сообщение об успешном входе в аккаунт.
+         */
+        void showLoggedInMessage();
 
         /**
          * Показать сообщение об успешном выходе из локального профиля.
@@ -87,19 +92,13 @@ public interface SettingsContract {
 
     /**
      * Интерфейс презентера.
-     * Presenter принимает действия пользователя, проверяет данные,
-     * сохраняет настройки и сообщает View, что нужно отобразить.
+     * Presenter описывает только бизнес-логику экрана — методы, которые
+     * обрабатывают действия пользователя и взаимодействуют с репозиторием.
+     *
+     * Примечание: lifecycle-методы (attachView/detachView) реализованы в
+     * базовом классе BasePresenter и поэтому НЕ объявляются в контракте.
      */
     interface Presenter {
-        /**
-         * Привязать экран к презентеру, чтобы он мог управлять UI.
-         */
-        void attachView(SettingsContract.View view);
-
-        /**
-         * Отвязать экран от презентера, чтобы избежать утечек памяти.
-         */
-        void detachView();
 
         /**
          * Загрузить сохранённые настройки и показать их на экране.
@@ -127,9 +126,14 @@ public interface SettingsContract {
         void onAvatarSelected(int avatarResId);
 
         /**
-         * Обработать попытку создания локального аккаунта.
+         * Обработать попытку регистрации аккаунта на сервере.
          */
-        void onCreateAccountClicked(String email, String password, String confirmPassword);
+        void onCreateAccountClicked(String userName, String email, String password, String confirmPassword);
+
+        /**
+         * Обработать попытку входа в аккаунт на сервере.
+         */
+        void onLoginClicked(String email, String password);
 
         /**
          * Обработать выход из локального профиля.

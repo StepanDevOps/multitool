@@ -187,9 +187,10 @@ public class RemoteDataSource implements ExtensionsApi {
         if (response.isSuccessful() && response.body() != null) {
             return response.body();
         }
-        throw new IllegalStateException(
+        throw new ApiRequestException(
+                response.code(),
                 operation + " failed: HTTP " + response.code() +
-                        (response.message() == null ? "" : " " + response.message())
+                        (response.message().isEmpty() ? "" : " " + response.message())
         );
     }
 }
