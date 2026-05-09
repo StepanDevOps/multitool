@@ -1,0 +1,105 @@
+<resources>
+
+    <string name="extension_icon">Иконка расширения</string>
+    <string name="extension_name">Название расширения</string>
+    <string name="edit_extension">Редактировать расширение</string>
+
+    <string name="nav_home">Главная</string>
+    <string name="nav_extensions">Расширения</string>
+    <string name="nav_store">Магазин</string>
+
+    <string name="installed_extensions">Установленные расширения</string>
+
+    <string name="settings">Настройки</string>
+
+    <string name="menu_resize">Изменить размер</string>
+    <string name="menu_delete">Удалить</string>
+    <string name="menu_close">Закрыть</string>
+
+    <string name="change_theme">Сменить тему</string>
+    <string name="theme_system">Как в системе</string>
+    <string name="theme_light">Светлая</string>
+    <string name="theme_dark">Тёмная</string>
+
+    <string name="change_language">Сменить язык</string>
+    <string name="lang_ru">Русский</string>
+    <string name="lang_en">English</string>
+
+    <string name="profile_section">Профиль</string>
+    <string name="user_name_hint">Имя пользователя</string>
+    <string name="avatar_preview">Предпросмотр аватара</string>
+    <string name="change_avatar">Изменить аватар</string>
+    <string name="use_system_avatar">Использовать системный аватар</string>
+    <string name="system_avatar_unavailable">Системный аватар пока недоступен</string>
+
+    <string name="avatar_default">Аватар по умолчанию</string>
+    <string name="avatar_star">Аватар звезда</string>
+    <string name="avatar_home">Аватар дом</string>
+    <string name="avatar_notes">Аватар заметки</string>
+    <string name="choose_avatar">Выбор аватара</string>
+
+    <string name="create_account">Создать аккаунт</string>
+    <string name="login_account">Войти</string>
+    <string name="email_hint">Email</string>
+    <string name="password_hint">Пароль</string>
+    <string name="confirm_password_hint">Подтвердите пароль</string>
+    <string name="account_created_local">Аккаунт создан</string>
+    <string name="logged_in_local">Вход выполнен</string>
+    <string name="logged_out_local">Вы вышли из профиля</string>
+    <string name="auth_invalid_credentials">Неверный логин или пароль</string>
+    <string name="auth_registration_failed">Не удалось создать аккаунт. Проверь данные и попробуй ещё раз.</string>
+    <string name="auth_account_exists">Пользователь с таким email или именем уже существует.</string>
+    <string name="auth_account_unavailable">Аккаунт недоступен.</string>
+    <string name="auth_server_unavailable">Сервер временно недоступен.</string>
+    <string name="auth_http_error">Ошибка авторизации. HTTP %1$d</string>
+    <string name="account_not_created">Аккаунт не создан</string>
+    <string name="logout">Выйти</string>
+    <string name="delete_account">Удалить аккаунт</string>
+    <string name="already_on_settings_screen">Вы уже на экране настроек</string>
+    <string name="user_name_error_length">Имя должно быть от 3 до 20 символов</string>
+    <string name="error_invalid_email">Введите корректный email</string>
+    <string name="error_weak_password">Пароль должен быть не менее 6 символов</string>
+    <string name="error_password_mismatch">Пароли не совпадают</string>
+
+    <!-- Магазин расширений -->
+    <string name="extensions_search_title">Поиск</string>
+    <string name="extensions_search_hint">Поиск по названию, автору или описанию</string>
+    <string name="extensions_filter_title">Фильтр по категории</string>
+    <string name="extensions_sort_title">Сортировка</string>
+    <string name="extensions_sort_popular">Популярные</string>
+    <string name="extensions_sort_newest">Новые</string>
+    <string name="extensions_sort_alphabetical">А-Я</string>
+
+    <string name="category_all">Все</string>
+    <string name="category_productivity">Продуктивность</string>
+    <string name="category_personalization">Персонализация</string>
+    <string name="category_education">Образование</string>
+    <string name="category_media">Медиа</string>
+    <string name="category_utilities">Утилиты</string>
+    <string name="category_other">Другое</string>
+
+    <string name="extension_open">Перейти</string>
+    <string name="extension_badge_update">Есть обновление</string>
+    <string name="extension_badge_installed">Установлено</string>
+    <string name="extension_shop_meta">%1$.1f • %2$s установок</string>
+    <string name="extension_upload_action">Добавить плагин</string>
+    <string name="extension_shop_login_required">Сначала войдите в аккаунт в Настройках</string>
+    <string name="extension_upload_later">Загрузка расширений будет реализована позже</string>
+
+    <!-- Страница расширения -->
+    <string name="extension_screen_title">Расширение</string>
+    <string name="extension_actions_title">Действия</string>
+    <string name="extension_short_description_title">Краткое описание</string>
+    <string name="extension_markdown_title">Подробное описание</string>
+    <string name="extension_author_value">Автор: %1$s</string>
+    <string name="extension_version_value">Версия: %1$s</string>
+    <string name="extension_category_value">Категория: %1$s</string>
+    <string name="extension_installs_value">Установок: %1$s</string>
+    <string name="extension_rating_value">%1$.1f</string>
+    <string name="extension_action_install">Установить</string>
+    <string name="extension_action_update">Обновить</string>
+    <string name="extension_action_check_updates">Проверить обновления</string>
+    <string name="extension_action_delete">Удалить</string>
+    <string name="extension_action_placeholder">Действие "%1$s" будет реализовано позже</string>
+</resources>
+
