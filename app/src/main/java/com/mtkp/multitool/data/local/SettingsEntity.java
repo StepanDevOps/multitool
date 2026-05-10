@@ -14,19 +14,13 @@ import androidx.annotation.NonNull;
  */
 @Entity(tableName = "settings")
 public class SettingsEntity {
-
-    /**
-     * Уникальный идентификатор настройки.
-     */
-    @PrimaryKey(autoGenerate = true)
-    public int id;
-
     /**
      * Ключ настройки — уникальный идентификатор параметра.
      * Примеры: "theme", "language", "auto_update", "notification_sound"
      */
+    @PrimaryKey
     @NonNull
-    public String key;
+    public String key = "";
 
     /**
      * Значение настройки — может содержать любые строковые данные.
@@ -37,7 +31,7 @@ public class SettingsEntity {
      * - Для "auto_update": "always", "wifi_only", "never"
      */
     @NonNull
-    public String value;
+    public String value = "";
 
     /**
      * Дата создания/последнего изменения этой настройки.

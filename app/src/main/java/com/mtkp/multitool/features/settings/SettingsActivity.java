@@ -267,6 +267,9 @@ public class SettingsActivity extends AppCompatActivity implements SettingsContr
 
     @Override
     public void applyTheme(int themeMode) {
+        if (AppCompatDelegate.getDefaultNightMode() == themeMode) {
+            return;
+        }
         // Не делаем fade-to-black: в режиме "Как в системе" пересоздание может не произойти.
         AppCompatDelegate.setDefaultNightMode(themeMode);
     }
@@ -301,6 +304,10 @@ public class SettingsActivity extends AppCompatActivity implements SettingsContr
 
         profileContainer.setVisibility(accountCreated ? android.view.View.VISIBLE : android.view.View.GONE);
         accountContainer.setVisibility(accountCreated ? android.view.View.GONE : android.view.View.VISIBLE);
+
+        // Пока нет отдельного backend API на изменение username,
+        // поле в профиле делаем read-only, чтобы не вводить пользователя в заблуждение.
+        etUserName.setEnabled(!accountCreated);
     }
 
     @Override

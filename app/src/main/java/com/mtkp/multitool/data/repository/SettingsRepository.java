@@ -267,6 +267,7 @@ public class SettingsRepository {
         saveSettingToDb("email", "");
         saveSettingToDb("user_id", "-1");
         saveSettingToDb("auth_token", "");
+        saveSettingToDb("token_expires_at", "-1");
         saveSettingToDb("account_created", "false");
     }
 
@@ -282,9 +283,6 @@ public class SettingsRepository {
     private void saveSettingToDb(String key, String value) {
         // Пишем в одном потоке: так не появятся дубликаты из параллельных вызовов.
         dbExecutor.execute(() -> {
-            // Настройки локальные и не привязаны к users.
-            settingsDao.deleteByKey(key);
-
             SettingsEntity setting = new SettingsEntity();
             setting.key = key;
             setting.value = value;
@@ -309,17 +307,20 @@ public class SettingsRepository {
         }
 
         String token = authDto.token == null ? "" : authDto.token;
+        Long tokenExpiresAt = authDto.tokenExpiresAt;
 
         settingsStorage.setUserId(authDto.id);
         settingsStorage.setUserName(username);
         settingsStorage.setEmail(email);
         settingsStorage.setAuthToken(token);
+        settingsStorage.setTokenExpiresAt(tokenExpiresAt);
         settingsStorage.setAccountCreated(true);
 
         saveSettingToDb("user_id", String.valueOf(authDto.id));
         saveSettingToDb("username", username);
         saveSettingToDb("email", email);
         saveSettingToDb("auth_token", token);
+        saveSettingToDb("token_expires_at", String.valueOf(tokenExpiresAt == null ? -1L : tokenExpiresAt));
         saveSettingToDb("account_created", "true");
     }
 
@@ -341,8 +342,7 @@ public class SettingsRepository {
             return;
         }
         String message = resolveAuthErrorMessage(e, loginFlow);
-        String finalMessage = message;
-        mainHandler.post(() -> callback.onError(finalMessage));
+        mainHandler.post(() -> callback.onError(message));
     }
 
     /**

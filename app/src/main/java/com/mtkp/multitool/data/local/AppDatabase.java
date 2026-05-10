@@ -24,7 +24,7 @@ import androidx.room.RoomDatabase;
         com.mtkp.multitool.data.local.CachedExtensionEntity.class,
         com.mtkp.multitool.data.local.CachedCategoryEntity.class
     },
-    version = 2,
+    version = 3,
     exportSchema = false  // false = не экспортировать schema в JSON для отладки
 )
 public abstract class AppDatabase extends RoomDatabase {

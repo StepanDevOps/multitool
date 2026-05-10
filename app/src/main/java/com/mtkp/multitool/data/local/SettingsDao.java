@@ -19,11 +19,8 @@ public interface SettingsDao {
     @Query("SELECT * FROM settings")
     List<SettingsEntity> getAll();
 
-    @Query("SELECT * FROM settings WHERE `key` = :key ORDER BY lastUpdated DESC LIMIT 1")
+    @Query("SELECT * FROM settings WHERE `key` = :key LIMIT 1")
     SettingsEntity getByKey(String key);
-
-    @Query("DELETE FROM settings WHERE `key` = :key")
-    void deleteByKey(String key);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insertOrReplace(SettingsEntity setting);

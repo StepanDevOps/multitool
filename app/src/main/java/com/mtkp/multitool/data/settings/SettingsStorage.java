@@ -26,6 +26,7 @@ public class SettingsStorage {
     private static final String KEY_AVATAR_RES_ID = "avatar_res_id";
     private static final String KEY_ACCOUNT_CREATED = "account_created";
     private static final String KEY_AUTH_TOKEN = "auth_token";
+    private static final String KEY_TOKEN_EXPIRES_AT = "token_expires_at";
 
     private final SharedPreferences prefs;
 
@@ -143,6 +144,21 @@ public class SettingsStorage {
     }
 
     /**
+     * Получить время истечения токена в миллисекундах (или null если не задано).
+     */
+    public Long getTokenExpiresAt() {
+        long v = prefs.getLong(KEY_TOKEN_EXPIRES_AT, -1L);
+        return v == -1L ? null : v;
+    }
+
+    /**
+     * Сохранить время истечения токена в миллисекундах.
+     */
+    public void setTokenExpiresAt(Long millis) {
+        prefs.edit().putLong(KEY_TOKEN_EXPIRES_AT, millis == null ? -1L : millis).apply();
+    }
+
+    /**
      * Сохранить факт создания локального аккаунта.
      */
     public void setAccountCreated(boolean accountCreated) {
@@ -159,6 +175,7 @@ public class SettingsStorage {
                 .putString(KEY_EMAIL, "")
                 .putLong(KEY_USER_ID, -1L)
                 .putString(KEY_AUTH_TOKEN, "")
+                .putLong(KEY_TOKEN_EXPIRES_AT, -1L)
                 .putInt(KEY_AVATAR_RES_ID, R.drawable.ic_account_box)
                 .apply();
     }
