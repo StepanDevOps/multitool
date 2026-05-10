@@ -20,8 +20,11 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.mtkp.multitool.R;
+import com.mtkp.multitool.extensions.ExtensionManager;
+import com.mtkp.multitool.extensions.LoadedExtension;
 import com.mtkp.multitool.features.settings.SettingsActivity;
 
+import java.io.File;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,6 +56,7 @@ public class ExtensionActivity extends AppCompatActivity {
     private MaterialButton secondaryActionButton;
 
     private ExtensionItem extensionItem;
+    private ExtensionManager extensionManager;
     private final NumberFormat numberFormat = NumberFormat.getIntegerInstance(Locale.getDefault());
 
     @Override
@@ -64,6 +68,7 @@ public class ExtensionActivity extends AppCompatActivity {
         initViews();
         setupWindowInsets();
         extensionItem = resolveExtension();
+        extensionManager = new ExtensionManager(getApplicationContext());
         setupToolbar();
         bindExtension();
         setupActions();
@@ -150,15 +155,98 @@ public class ExtensionActivity extends AppCompatActivity {
     private void setupActions() {
         primaryActionButton.setOnClickListener(v -> {
             if (!extensionItem.isInstalled()) {
-                showActionMessage(getString(R.string.extension_action_install));
+                installOrUpdateExtension();
             } else if (extensionItem.isUpdateAvailable()) {
-                showActionMessage(getString(R.string.extension_action_update));
+                installOrUpdateExtension();
             } else {
                 showActionMessage(getString(R.string.extension_action_check_updates));
             }
         });
 
-        secondaryActionButton.setOnClickListener(v -> showActionMessage(getString(R.string.extension_action_delete)));
+        secondaryActionButton.setOnClickListener(v -> deleteExtensionBinary());
+    }
+
+    private void installOrUpdateExtension() {
+        int extensionId = resolveRemoteExtensionId();
+        if (extensionId < 0) {
+            showActionMessage(getString(R.string.extension_action_mock_not_supported));
+            return;
+        }
+
+        setButtonsLoading(true);
+        extensionManager.downloadAndLoad(
+                extensionId,
+                extensionItem.getVersion(),
+                ExtensionManager.DEFAULT_ENTRY_CLASS,
+                new ExtensionManager.Callback<LoadedExtension>() {
+                    @Override
+                    public void onSuccess(LoadedExtension result) {
+                        runOnUiThread(() -> {
+                            setButtonsLoading(false);
+                            Snackbar.make(
+                                    root,
+                                    getString(R.string.extension_action_install_success, result.displayName),
+                                    Snackbar.LENGTH_LONG
+                            ).show();
+                        });
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        runOnUiThread(() -> {
+                            setButtonsLoading(false);
+                            Snackbar.make(
+                                    root,
+                                    getString(R.string.extension_action_install_error, t.getMessage()),
+                                    Snackbar.LENGTH_LONG
+                            ).show();
+                        });
+                    }
+                }
+        );
+    }
+
+    private void deleteExtensionBinary() {
+        int extensionId = resolveRemoteExtensionId();
+        if (extensionId < 0) {
+            showActionMessage(getString(R.string.extension_action_mock_not_supported));
+            return;
+        }
+
+        File file = new File(getFilesDir(), "extensions/" + extensionId + "-" + extensionItem.getVersion() + ".jar");
+        setButtonsLoading(true);
+        extensionManager.uninstall(file, new ExtensionManager.Callback<Boolean>() {
+            @Override
+            public void onSuccess(Boolean result) {
+                runOnUiThread(() -> {
+                    setButtonsLoading(false);
+                    Snackbar.make(root, result
+                            ? getString(R.string.extension_action_delete_success)
+                            : getString(R.string.extension_action_delete_not_found), Snackbar.LENGTH_SHORT).show();
+                });
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                runOnUiThread(() -> {
+                    setButtonsLoading(false);
+                    Snackbar.make(root, getString(R.string.extension_action_delete_error, t.getMessage()), Snackbar.LENGTH_LONG).show();
+                });
+            }
+        });
+    }
+
+    private int resolveRemoteExtensionId() {
+        try {
+            return Integer.parseInt(extensionItem.getId());
+        } catch (Exception ignored) {
+            return -1;
+        }
+    }
+
+    private void setButtonsLoading(boolean loading) {
+        primaryActionButton.setEnabled(!loading);
+        secondaryActionButton.setEnabled(!loading);
     }
 
     private String formatCategories(int[] categoryResIds) {

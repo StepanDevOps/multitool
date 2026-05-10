@@ -24,11 +24,15 @@ import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.mtkp.multitool.R;
+import com.mtkp.multitool.data.remote.dto.ExtensionDto;
 import com.mtkp.multitool.data.settings.SettingsStorage;
+import com.mtkp.multitool.extensions.ExtensionManager;
 import com.mtkp.multitool.features.settings.SettingsActivity;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 /**
@@ -54,6 +58,7 @@ public class ExtensionsShopActivity extends AppCompatActivity {
     private final Set<Integer> selectedCategoryResIds = new HashSet<>();
     private ExtensionsCatalogManager.SortMode currentSortMode = ExtensionsCatalogManager.SortMode.POPULAR;
     private boolean isUpdatingCategorySelection;
+    private ExtensionManager extensionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,11 +70,13 @@ public class ExtensionsShopActivity extends AppCompatActivity {
         setupWindowInsets();
         setupToolbar();
         setupRecyclerView();
+        extensionManager = new ExtensionManager(getApplicationContext());
         setupBottomNavigation();
         setupSearch();
         setupCategoryFilter();
         setupSorting();
         applyFilters();
+        loadExtensionsFromApi();
     }
 
     private void initViews() {
@@ -111,6 +118,82 @@ public class ExtensionsShopActivity extends AppCompatActivity {
         adapter = new ExtensionsShopAdapter(this::openExtension);
         recyclerView.setAdapter(adapter);
         sourceItems = ExtensionsCatalog.getMockExtensions();
+    }
+
+    private void loadExtensionsFromApi() {
+        extensionManager.listAvailable(1, 50, new ExtensionManager.Callback<List<ExtensionDto>>() {
+            @Override
+            public void onSuccess(List<ExtensionDto> result) {
+                if (result == null || result.isEmpty()) {
+                    return;
+                }
+                List<ExtensionItem> mapped = mapRemoteItems(result);
+                runOnUiThread(() -> {
+                    sourceItems = mapped;
+                    applyFilters();
+                });
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                runOnUiThread(() -> Snackbar.make(root, R.string.extension_catalog_fallback, Snackbar.LENGTH_SHORT).show());
+            }
+        });
+    }
+
+    private List<ExtensionItem> mapRemoteItems(List<ExtensionDto> remoteItems) {
+        List<ExtensionItem> result = new ArrayList<>();
+        for (ExtensionDto dto : remoteItems) {
+            String version = dto.version == null ? "1.0.0" : dto.version;
+            String author = dto.authorName == null ? "Unknown" : dto.authorName;
+            String shortDescription = dto.shortDescription == null ? "" : dto.shortDescription;
+            String detailed = dto.detailedDescription == null ? shortDescription : dto.detailedDescription;
+            int[] categoryRes = mapCategories(dto.categories);
+
+            result.add(new ExtensionItem(
+                    String.valueOf(dto.id),
+                    dto.name == null ? ("Extension " + dto.id) : dto.name,
+                    author,
+                    version,
+                    (int) dto.downloads,
+                    dto.rating,
+                    categoryRes,
+                    shortDescription,
+                    detailed,
+                    R.drawable.ic_account_box,
+                    false,
+                    false
+            ));
+        }
+        return result;
+    }
+
+    private int[] mapCategories(List<String> categories) {
+        if (categories == null || categories.isEmpty()) {
+            return new int[]{R.string.category_other};
+        }
+        List<Integer> result = new ArrayList<>();
+        for (String category : categories) {
+            String value = category == null ? "" : category.toLowerCase(Locale.ROOT);
+            if (value.contains("product")) {
+                result.add(R.string.category_productivity);
+            } else if (value.contains("personal")) {
+                result.add(R.string.category_personalization);
+            } else if (value.contains("educ")) {
+                result.add(R.string.category_education);
+            } else if (value.contains("media")) {
+                result.add(R.string.category_media);
+            } else if (value.contains("util")) {
+                result.add(R.string.category_utilities);
+            } else {
+                result.add(R.string.category_other);
+            }
+        }
+        int[] mapped = new int[result.size()];
+        for (int i = 0; i < result.size(); i++) {
+            mapped[i] = result.get(i);
+        }
+        return mapped;
     }
 
     private int resolveSpanCount() {

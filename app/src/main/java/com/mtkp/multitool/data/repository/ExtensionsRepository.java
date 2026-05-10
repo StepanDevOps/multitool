@@ -15,7 +15,10 @@ import com.mtkp.multitool.data.remote.RemoteDataSource;
 import com.mtkp.multitool.data.remote.dto.CategoryDto;
 import com.mtkp.multitool.data.remote.dto.ExtensionDto;
 import com.mtkp.multitool.data.utils.ExtensionDownloadManager;
+import com.mtkp.multitool.extensions.ExtensionManager;
+import com.mtkp.multitool.extensions.LoadedExtension;
 
+import java.io.File;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -39,7 +42,13 @@ public class ExtensionsRepository {
     private final InstalledExtensionDao installedExtensionDao;
     private final ExtensionsApi remote;
     private final ExtensionDownloadManager downloadManager;
+    private final ExtensionManager extensionManager;
     private final ExecutorService executor;
+
+    public interface ResultCallback<T> {
+        void onSuccess(T result);
+        void onError(Throwable throwable);
+    }
 
     public ExtensionsRepository(Context context) {
         AppDatabase db = AppDatabase.getInstance(context);
@@ -48,6 +57,7 @@ public class ExtensionsRepository {
         this.installedExtensionDao = db.installedExtensionDao();
         this.remote = new RemoteDataSource(context);
         this.downloadManager = new ExtensionDownloadManager(context);
+        this.extensionManager = new ExtensionManager(context, this.remote);
         this.executor = Executors.newSingleThreadExecutor();
     }
 
@@ -232,6 +242,71 @@ public class ExtensionsRepository {
      */
     public boolean verifyExtensionFile(int installedId) {
         return downloadManager.verifyExtensionIntegrity(installedId);
+    }
+
+    /**
+     * Установить и сразу активировать расширение: скачать, проверить хеш и загрузить в runtime.
+     */
+    public void installAndActivate(
+            int extensionId,
+            String version,
+            String entryClassName,
+            ResultCallback<LoadedExtension> callback
+    ) {
+        extensionManager.downloadAndLoad(
+                extensionId,
+                version,
+                entryClassName,
+                new ExtensionManager.Callback<LoadedExtension>() {
+                    @Override
+                    public void onSuccess(LoadedExtension loaded) {
+                        executor.execute(() -> {
+                            try {
+                                installExtension(extensionId, version == null ? "" : version);
+                                callback.onSuccess(loaded);
+                            } catch (Exception e) {
+                                callback.onError(e);
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        callback.onError(t);
+                    }
+                }
+        );
+    }
+
+    /**
+     * Удалить локальную установку и бинарный файл расширения.
+     */
+    public void removeWithCleanup(int installedId, ResultCallback<Boolean> callback) {
+        executor.execute(() -> {
+            try {
+                String path = downloadManager.getExtensionJarPath(installedId);
+                if (path != null) {
+                    File jarFile = new File(path);
+                    extensionManager.uninstall(jarFile, new ExtensionManager.Callback<Boolean>() {
+                        @Override
+                        public void onSuccess(Boolean result) {
+                            uninstallExtension(installedId);
+                            callback.onSuccess(true);
+                        }
+
+                        @Override
+                        public void onError(Throwable t) {
+                            callback.onError(t);
+                        }
+                    });
+                } else {
+                    uninstallExtension(installedId);
+                    callback.onSuccess(true);
+                }
+            } catch (Exception e) {
+                callback.onError(e);
+            }
+        });
     }
 }
 

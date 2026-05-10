@@ -85,6 +85,7 @@
     <string name="extension_upload_action">Добавить плагин</string>
     <string name="extension_shop_login_required">Сначала войдите в аккаунт в Настройках</string>
     <string name="extension_upload_later">Загрузка расширений будет реализована позже</string>
+    <string name="extension_catalog_fallback">Не удалось загрузить каталог с сервера. Показан локальный список.</string>
 
     <!-- Страница расширения -->
     <string name="extension_screen_title">Расширение</string>
@@ -101,5 +102,11 @@
     <string name="extension_action_check_updates">Проверить обновления</string>
     <string name="extension_action_delete">Удалить</string>
     <string name="extension_action_placeholder">Действие "%1$s" будет реализовано позже</string>
+    <string name="extension_action_mock_not_supported">Для mock-расширений это действие недоступно</string>
+    <string name="extension_action_install_success">Расширение загружено и активировано: %1$s</string>
+    <string name="extension_action_install_error">Ошибка установки: %1$s</string>
+    <string name="extension_action_delete_success">Расширение удалено</string>
+    <string name="extension_action_delete_not_found">Файл расширения не найден</string>
+    <string name="extension_action_delete_error">Ошибка удаления: %1$s</string>
 </resources>
 

@@ -93,6 +93,7 @@
     <string name="extension_upload_action">Upload extension</string>
     <string name="extension_shop_login_required">Sign in first in Settings to upload your extension</string>
     <string name="extension_upload_later">Extension upload will be implemented later</string>
+    <string name="extension_catalog_fallback">Could not load catalog from server. Showing local list.</string>
 
     <!-- Extension details -->
     <string name="extension_screen_title">Extension</string>
@@ -109,4 +110,10 @@
     <string name="extension_action_check_updates">Check updates</string>
     <string name="extension_action_delete">Delete</string>
     <string name="extension_action_placeholder">Action "%1$s" will be implemented later</string>
+    <string name="extension_action_mock_not_supported">This action is not available for mock extensions</string>
+    <string name="extension_action_install_success">Extension loaded and activated: %1$s</string>
+    <string name="extension_action_install_error">Install error: %1$s</string>
+    <string name="extension_action_delete_success">Extension removed</string>
+    <string name="extension_action_delete_not_found">Extension file not found</string>
+    <string name="extension_action_delete_error">Delete error: %1$s</string>
 </resources>
