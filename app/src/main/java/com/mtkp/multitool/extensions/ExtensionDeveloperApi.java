@@ -5,6 +5,7 @@ import android.content.Context;
 import com.mtkp.multitool.data.remote.ExtensionsApi;
 import com.mtkp.multitool.data.remote.RemoteDataSource;
 import com.mtkp.multitool.data.remote.dto.ExtensionDto;
+import com.mtkp.multitool.data.remote.dto.RatingDto;
 import com.mtkp.multitool.data.remote.dto.UploadVersionResponseDto;
 
 import java.io.File;
@@ -70,6 +71,52 @@ public class ExtensionDeveloperApi {
                         changelog
                 );
                 callback.onSuccess(dto);
+            } catch (Exception e) {
+                callback.onError(e);
+            }
+        });
+    }
+
+    public void updateExtensionMetadata(
+            int extensionId,
+            String name,
+            String shortDescription,
+            String detailedDescription,
+            List<String> categories,
+            Callback<ExtensionDto> callback
+    ) {
+        executor.execute(() -> {
+            try {
+                ExtensionDto dto = api.updateExtension(
+                        extensionId,
+                        name,
+                        shortDescription,
+                        detailedDescription,
+                        categories
+                );
+                callback.onSuccess(dto);
+            } catch (Exception e) {
+                callback.onError(e);
+            }
+        });
+    }
+
+    public void submitReview(int extensionId, int rating, String review, Callback<RatingDto> callback) {
+        executor.execute(() -> {
+            try {
+                RatingDto dto = api.createRating(extensionId, rating, review);
+                callback.onSuccess(dto);
+            } catch (Exception e) {
+                callback.onError(e);
+            }
+        });
+    }
+
+    public void getReviews(int extensionId, int page, int perPage, Callback<List<RatingDto>> callback) {
+        executor.execute(() -> {
+            try {
+                List<RatingDto> list = api.fetchRatings(extensionId, page, perPage);
+                callback.onSuccess(list);
             } catch (Exception e) {
                 callback.onError(e);
             }

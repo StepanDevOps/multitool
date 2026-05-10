@@ -8,6 +8,7 @@ import com.mtkp.multitool.data.remote.dto.AuthRegisterRequestDto;
 import com.mtkp.multitool.data.remote.dto.AuthVerifyResponseDto;
 import com.mtkp.multitool.data.remote.dto.CategoryDto;
 import com.mtkp.multitool.data.remote.dto.CategoriesResponseDto;
+import com.mtkp.multitool.data.remote.dto.CreateRatingRequestDto;
 import com.mtkp.multitool.data.remote.dto.CreateExtensionRequestDto;
 import com.mtkp.multitool.data.remote.dto.CreateInstalledExtensionRequestDto;
 import com.mtkp.multitool.data.remote.dto.ExtensionDto;
@@ -15,6 +16,10 @@ import com.mtkp.multitool.data.remote.dto.ExtensionMetaDto;
 import com.mtkp.multitool.data.remote.dto.ExtensionsListResponseDto;
 import com.mtkp.multitool.data.remote.dto.InstalledExtensionDto;
 import com.mtkp.multitool.data.remote.dto.InstalledExtensionsResponseDto;
+import com.mtkp.multitool.data.remote.dto.RatingDto;
+import com.mtkp.multitool.data.remote.dto.RatingsResponseDto;
+import com.mtkp.multitool.data.remote.dto.UpdateExtensionRequestDto;
+import com.mtkp.multitool.data.remote.dto.UpdateRatingRequestDto;
 import com.mtkp.multitool.data.remote.dto.UpdateInstalledExtensionRequestDto;
 import com.mtkp.multitool.data.remote.dto.UploadVersionResponseDto;
 import com.mtkp.multitool.data.remote.network.ApiClient;
@@ -22,6 +27,8 @@ import com.mtkp.multitool.data.remote.network.BackendApiService;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -36,6 +43,7 @@ import retrofit2.Response;
 public class RemoteDataSource implements ExtensionsApi {
 
     private final BackendApiService api;
+    private final Map<String, String> lastDownloadSha = new ConcurrentHashMap<>();
 
     public RemoteDataSource(Context context) {
         this.api = new ApiClient(context).service();
@@ -148,6 +156,19 @@ public class RemoteDataSource implements ExtensionsApi {
     }
 
     @Override
+    public ExtensionDto updateExtension(
+            int extensionId,
+            String name,
+            String shortDescription,
+            String detailedDescription,
+            List<String> categories
+    ) throws Exception {
+        UpdateExtensionRequestDto body =
+                new UpdateExtensionRequestDto(name, shortDescription, detailedDescription, categories);
+        return bodyOrThrow(api.updateExtension(extensionId, body).execute(), "update extension");
+    }
+
+    @Override
     public UploadVersionResponseDto uploadVersion(
             int extensionId,
             String version,
@@ -180,7 +201,65 @@ public class RemoteDataSource implements ExtensionsApi {
 
     @Override
     public ResponseBody downloadExtension(int extensionId, String version) throws Exception {
-        return bodyOrThrow(api.downloadExtension(extensionId, version).execute(), "download extension");
+        retrofit2.Response<ResponseBody> response = api.downloadExtension(extensionId, version).execute();
+        if (response.isSuccessful() && response.body() != null) {
+            // Сохраняем SHA, если сервер вернул заголовок X-File-SHA256
+            String sha = null;
+            try {
+                sha = response.headers().get("X-File-SHA256");
+            } catch (Exception ignored) {
+            }
+            if (sha == null) {
+                try {
+                    sha = response.headers().get("x-file-sha256");
+                } catch (Exception ignored) {
+                }
+            }
+            if (sha != null && !sha.isEmpty()) {
+                lastDownloadSha.put(extensionId + ":" + (version == null ? "" : version), sha);
+            }
+            return response.body();
+        }
+        throw new ApiRequestException(response.code(), "download extension failed: HTTP " + response.code());
+    }
+
+    /**
+     * Получить SHA из последнего скачивания для пары extensionId:version если сервер вернул заголовок.
+     */
+    public String getLastDownloadedSha(int extensionId, String version) {
+        return lastDownloadSha.get(extensionId + ":" + (version == null ? "" : version));
+    }
+
+    @Override
+    public List<RatingDto> fetchRatings(int extensionId, int page, int perPage) throws Exception {
+        RatingsResponseDto response = bodyOrThrow(
+                api.getRatings(extensionId, page, perPage).execute(),
+                "get ratings"
+        );
+        return response.data;
+    }
+
+    @Override
+    public RatingDto createRating(int extensionId, int rating, String review) throws Exception {
+        CreateRatingRequestDto body = new CreateRatingRequestDto(rating, review);
+        return bodyOrThrow(api.createRating(extensionId, body).execute(), "create rating");
+    }
+
+    @Override
+    public RatingDto updateRating(int extensionId, int ratingId, Integer rating, String review) throws Exception {
+        UpdateRatingRequestDto body = new UpdateRatingRequestDto(rating, review);
+        return bodyOrThrow(api.updateRating(extensionId, ratingId, body).execute(), "update rating");
+    }
+
+    @Override
+    public void deleteRating(int extensionId, int ratingId) throws Exception {
+        Response<Void> response = api.deleteRating(extensionId, ratingId).execute();
+        if (!response.isSuccessful()) {
+            throw new ApiRequestException(
+                    response.code(),
+                    "delete rating failed: HTTP " + response.code()
+            );
+        }
     }
 
     private <T> T bodyOrThrow(Response<T> response, String operation) {

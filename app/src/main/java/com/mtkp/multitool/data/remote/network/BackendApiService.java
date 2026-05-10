@@ -12,6 +12,11 @@ import com.mtkp.multitool.data.remote.dto.ExtensionMetaDto;
 import com.mtkp.multitool.data.remote.dto.ExtensionsListResponseDto;
 import com.mtkp.multitool.data.remote.dto.InstalledExtensionDto;
 import com.mtkp.multitool.data.remote.dto.InstalledExtensionsResponseDto;
+import com.mtkp.multitool.data.remote.dto.CreateRatingRequestDto;
+import com.mtkp.multitool.data.remote.dto.RatingDto;
+import com.mtkp.multitool.data.remote.dto.RatingsResponseDto;
+import com.mtkp.multitool.data.remote.dto.UpdateExtensionRequestDto;
+import com.mtkp.multitool.data.remote.dto.UpdateRatingRequestDto;
 import com.mtkp.multitool.data.remote.dto.UpdateInstalledExtensionRequestDto;
 import com.mtkp.multitool.data.remote.dto.UploadVersionResponseDto;
 
@@ -87,6 +92,12 @@ public interface BackendApiService {
     @POST("extensions")
     Call<ExtensionDto> createExtension(@Body CreateExtensionRequestDto body);
 
+    @PATCH("extensions/{id}")
+    Call<ExtensionDto> updateExtension(
+            @Path("id") int extensionId,
+            @Body UpdateExtensionRequestDto body
+    );
+
     @Multipart
     @POST("extensions/{id}/versions")
     Call<UploadVersionResponseDto> uploadVersion(
@@ -102,6 +113,32 @@ public interface BackendApiService {
     Call<ResponseBody> downloadExtension(
             @Path("id") int extensionId,
             @Query("version") String version
+    );
+
+    @GET("extensions/{id}/ratings")
+    Call<RatingsResponseDto> getRatings(
+            @Path("id") int extensionId,
+            @Query("page") int page,
+            @Query("per_page") int perPage
+    );
+
+    @POST("extensions/{id}/ratings")
+    Call<RatingDto> createRating(
+            @Path("id") int extensionId,
+            @Body CreateRatingRequestDto body
+    );
+
+    @PATCH("extensions/{id}/ratings/{ratingId}")
+    Call<RatingDto> updateRating(
+            @Path("id") int extensionId,
+            @Path("ratingId") int ratingId,
+            @Body UpdateRatingRequestDto body
+    );
+
+    @DELETE("extensions/{id}/ratings/{ratingId}")
+    Call<Void> deleteRating(
+            @Path("id") int extensionId,
+            @Path("ratingId") int ratingId
     );
 }
 

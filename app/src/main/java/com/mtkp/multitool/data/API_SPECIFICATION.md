@@ -14,10 +14,12 @@
 * POST /auth/register, /auth/login — аутентификация
 * GET /extensions — список с фильтрами/поиском/сортировкой
 * GET /extensions/{id} — детали расширения и его версии
+* PATCH /extensions/{id} — обновить карточку расширения (только владелец)
 * GET /extensions/{id}/download — скачать JAR
 * GET /categories — все категории
 * POST/GET/DELETE /users/{userId}/installed-extensions — управление установками
 * POST /extensions/{id}/versions — загрузить новую версию (для авторов)
+* GET/POST/PATCH/DELETE /extensions/{id}/ratings — отзывы и оценки
 
 ---
 
@@ -467,9 +469,44 @@ Form Data:
 - 413 Payload Too Large: файл слишком большой (макс. 100 МБ)
 ```
 
+### 6.3 Обновить карточку расширения (только владелец)
+```
+PATCH /extensions/{id}
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "name": "My Calculator Pro",
+  "shortDescription": "A simple calculator with history",
+  "detailedDescription": "# My Calculator Pro\nUpdated details...",
+  "categories": ["utilities", "productivity"]
+}
+
+Ответ (200 OK):
+{
+  "id": 100,
+  "name": "My Calculator Pro",
+  "shortDescription": "A simple calculator with history",
+  "detailedDescription": "# My Calculator Pro\nUpdated details...",
+  "authorId": 1,
+  "authorName": "John Doe",
+  "categories": ["utilities", "productivity"],
+  "currentVersion": "1.1.0",
+  "downloads": 245,
+  "rating": 4.6,
+  "updatedAt": 1777000000000
+}
+
+Ошибки:
+- 401 Unauthorized: требуется аутентификация
+- 403 Forbidden: только владелец расширения может редактировать карточку
+- 404 Not Found: расширение не найдено
+- 400 Bad Request: невалидные поля
+```
+
 ---
 
-## 7. Рейтинги и отзывы (опционально на будущее)
+## 7. Рейтинги и отзывы
 
 ### 7.1 Оставить рейтинг расширению
 ```
@@ -495,6 +532,68 @@ Content-Type: application/json
 Ошибки:
 - 401 Unauthorized: требуется аутентификация
 - 400 Bad Request: рейтинг должен быть от 1 до 5
+```
+
+### 7.2 Получить отзывы расширения
+```
+GET /extensions/{id}/ratings?page=1&per_page=20
+
+Ответ (200 OK):
+{
+  "data": [
+    {
+      "id": 1,
+      "userId": 1,
+      "extensionId": 5,
+      "rating": 5,
+      "review": "Great extension!",
+      "createdAt": 1776900000000
+    }
+  ]
+}
+
+Ошибки:
+- 404 Not Found: расширение не найдено
+```
+
+### 7.3 Обновить собственный отзыв
+```
+PATCH /extensions/{id}/ratings/{ratingId}
+Authorization: Bearer <token>
+Content-Type: application/json
+
+{
+  "rating": 4,
+  "review": "After update works better"
+}
+
+Ответ (200 OK):
+{
+  "id": 1,
+  "userId": 1,
+  "extensionId": 5,
+  "rating": 4,
+  "review": "After update works better",
+  "createdAt": 1776900000000
+}
+
+Ошибки:
+- 401 Unauthorized: требуется аутентификация
+- 403 Forbidden: можно редактировать только свой отзыв
+- 404 Not Found: отзыв не найден
+```
+
+### 7.4 Удалить собственный отзыв
+```
+DELETE /extensions/{id}/ratings/{ratingId}
+Authorization: Bearer <token>
+
+Ответ (204 No Content)
+
+Ошибки:
+- 401 Unauthorized: требуется аутентификация
+- 403 Forbidden: можно удалять только свой отзыв
+- 404 Not Found: отзыв не найден
 ```
 
 ---

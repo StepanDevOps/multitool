@@ -118,6 +118,15 @@ public class ExtensionManager {
                 }
 
                 // Если сервер отдал контрольную сумму — валидируем до активации.
+                // Если expectedSha256 не задана в метаданных, попробуем получить её из заголовка скачивания (RemoteDataSource).
+                if (TextUtils.isEmpty(expectedSha256) && api instanceof com.mtkp.multitool.data.remote.RemoteDataSource) {
+                    try {
+                        expectedSha256 = ((com.mtkp.multitool.data.remote.RemoteDataSource) api)
+                                .getLastDownloadedSha(extensionId, targetVersion);
+                    } catch (Exception ignored) {
+                    }
+                }
+
                 if (!TextUtils.isEmpty(expectedSha256)) {
                     String localHash = computeSha256(out);
                     if (!expectedSha256.equalsIgnoreCase(localHash)) {

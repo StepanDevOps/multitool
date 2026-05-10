@@ -16,8 +16,7 @@
 ## 2. Что пока НЕ поддерживается (важно)
 
 - Публикация через полноценный UI-поток в приложении (есть методы, но экран загрузки автора пока не завершен).
-- Оставление отзывов/оценок из Android-клиента (нет endpoint-методов в текущем `BackendApiService`).
-- Изменение уже созданного описания расширения (нет endpoint типа `PATCH /extensions/{id}` в клиенте).
+- Просмотр/модерация отзывов через отдельный экран в приложении (доступны API-методы, UI-полировка в процессе).
 
 ## 3. Контракт плагина (обязательный)
 
@@ -94,6 +93,8 @@ public class PluginEntry implements ExtensionInterface {
 
 - писать логи (`log`)
 - читать/писать свои key-value настройки (`getSetting`, `putSetting`, `removeSetting`)
+- читать профиль текущего пользователя (`getCurrentUserName`, `getCurrentUserEmail`)
+- хранить собственные данные в локальной SQLite (`putPluginData`, `getPluginData`, `removePluginData`)
 
 `ExtensionHostApi` намеренно ограничен для безопасности.
 
@@ -103,8 +104,14 @@ public class PluginEntry implements ExtensionInterface {
 
 1. Создать расширение:
    - `ExtensionDeveloperApi.createExtension(name, shortDescription, detailedDescription, categories, callback)`
-2. Загрузить бинарник версии:
+2. Обновить карточку расширения (только владелец):
+   - `ExtensionDeveloperApi.updateExtensionMetadata(extensionId, name, shortDescription, detailedDescription, categories, callback)`
+3. Загрузить бинарник версии:
    - `ExtensionDeveloperApi.uploadVersion(extensionId, version, releaseNotes, jarFile, changelog, callback)`
+4. Оставить отзыв как пользователь:
+   - `ExtensionDeveloperApi.submitReview(extensionId, rating, review, callback)`
+5. Получить отзывы:
+   - `ExtensionDeveloperApi.getReviews(extensionId, page, perPage, callback)`
 
 После публикации версия должна быть доступна через:
 
@@ -115,7 +122,7 @@ public class PluginEntry implements ExtensionInterface {
 
 - Краткое и подробное описание передаются как обычные строки (`shortDescription`, `detailedDescription`).
 - На экране расширения применяется упрощенный markdown-рендер (`SimpleMarkdownFormatter`) для подробного текста.
-- Обновление описаний после создания в текущем Android API не реализовано (нужен backend endpoint и клиентский метод обновления).
+- Обновление описаний/названия поддержано через `PATCH /extensions/{id}` (доступно владельцу расширения).
 
 ## 9. Соответствие PostgreSQL-схеме (кратко)
 
@@ -124,13 +131,11 @@ public class PluginEntry implements ExtensionInterface {
 - Создание расширения и загрузка версий покрывают `extensions` + `extension_versions`.
 - Категории ожидаются в `createExtension(..., categories)` и должны маппиться backend-ом в `categories` / `extension_category_cross_ref`.
 - Для `ratings` в Android-клиенте пока нет методов (оставление отзывов недоступно).
+- Для `ratings` в Android-клиенте есть методы создания/чтения/обновления/удаления отзывов.
 
 ## 10. Что нужно добавить для полного developer UX
 
 - Endpoint и клиентский метод обновления расширения (`PATCH /extensions/{id}`) для редактирования `shortDescription`/`detailedDescription`.
-- Endpoint-ы рейтингов:
-  - `POST /extensions/{id}/ratings`
-  - `GET /extensions/{id}/ratings`
-  - опционально `PATCH/DELETE` для собственных отзывов.
+- Экран в приложении для управления собственными отзывами и их просмотра.
 - Полноценный экран публикации расширения в приложении (без ручного вызова API-методов).
 

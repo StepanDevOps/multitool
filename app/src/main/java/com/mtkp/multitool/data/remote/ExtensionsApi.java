@@ -6,6 +6,7 @@ import com.mtkp.multitool.data.remote.dto.CategoryDto;
 import com.mtkp.multitool.data.remote.dto.ExtensionMetaDto;
 import com.mtkp.multitool.data.remote.dto.ExtensionDto;
 import com.mtkp.multitool.data.remote.dto.InstalledExtensionDto;
+import com.mtkp.multitool.data.remote.dto.RatingDto;
 import com.mtkp.multitool.data.remote.dto.UploadVersionResponseDto;
 
 import java.io.File;
@@ -79,6 +80,14 @@ public interface ExtensionsApi {
             List<String> categories
     ) throws Exception;
 
+    ExtensionDto updateExtension(
+            int extensionId,
+            String name,
+            String shortDescription,
+            String detailedDescription,
+            List<String> categories
+    ) throws Exception;
+
     UploadVersionResponseDto uploadVersion(
             int extensionId,
             String version,
@@ -88,5 +97,13 @@ public interface ExtensionsApi {
     ) throws Exception;
 
     ResponseBody downloadExtension(int extensionId, String version) throws Exception;
+
+    List<RatingDto> fetchRatings(int extensionId, int page, int perPage) throws Exception;
+
+    RatingDto createRating(int extensionId, int rating, String review) throws Exception;
+
+    RatingDto updateRating(int extensionId, int ratingId, Integer rating, String review) throws Exception;
+
+    void deleteRating(int extensionId, int ratingId) throws Exception;
 }
 

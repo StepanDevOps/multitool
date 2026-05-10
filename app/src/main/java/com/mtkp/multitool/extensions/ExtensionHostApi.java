@@ -15,5 +15,15 @@ public interface ExtensionHostApi {
     void putSetting(String key, String value);
 
     void removeSetting(String key);
+
+    String getCurrentUserName();
+
+    String getCurrentUserEmail();
+
+    void putPluginData(String extensionId, String key, String value);
+
+    String getPluginData(String extensionId, String key, String defaultValue);
+
+    void removePluginData(String extensionId, String key);
 }
 

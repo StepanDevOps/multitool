@@ -11,6 +11,7 @@ public class ExtensionDto {
     public String name;
     public String shortDescription;
     public String detailedDescription;
+    public Long authorId;
     public String authorName; // автор как строка для простоты
     public String extensionPath; // путь к файлу на сервере (например, /extensions/calculator.jar)
     public List<String> categories;
