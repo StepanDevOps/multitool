@@ -3,10 +3,12 @@ package com.mtkp.multitool.features.extensions;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
@@ -19,21 +21,31 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.mtkp.multitool.R;
+import com.mtkp.multitool.data.local.AppDatabase;
+import com.mtkp.multitool.data.local.InstalledExtensionEntity;
 import com.mtkp.multitool.data.remote.dto.ExtensionDto;
+import com.mtkp.multitool.data.repository.ExtensionsRepository;
 import com.mtkp.multitool.data.settings.SettingsStorage;
+import com.mtkp.multitool.extensions.ExtensionDeveloperApi;
 import com.mtkp.multitool.extensions.ExtensionManager;
 import com.mtkp.multitool.features.settings.SettingsActivity;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Экран магазина расширений.
@@ -51,14 +63,28 @@ public class ExtensionsShopActivity extends AppCompatActivity {
     private MaterialButtonToggleGroup sortToggleGroup;
     private BottomNavigationView bottomNavigation;
     private RecyclerView recyclerView;
+    private View loadingView;
+    private View emptyView;
+    private View errorView;
+    private TextView emptyMessageView;
+    private TextView errorMessageView;
+    private View emptyRetryButton;
+    private View errorRetryButton;
     private ExtensionsShopAdapter adapter;
 
-    private List<ExtensionItem> sourceItems;
+    private List<ExtensionItem> sourceItems = new ArrayList<>();
     private String currentQuery = "";
     private final Set<Integer> selectedCategoryResIds = new HashSet<>();
     private ExtensionsCatalogManager.SortMode currentSortMode = ExtensionsCatalogManager.SortMode.POPULAR;
     private boolean isUpdatingCategorySelection;
     private ExtensionManager extensionManager;
+    private ExtensionsRepository extensionsRepository;
+    private ExtensionDeveloperApi developerApi;
+    private AppDatabase appDatabase;
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private boolean isLoading;
+    private String lastErrorMessage;
+    private boolean firstResume = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,11 +97,13 @@ public class ExtensionsShopActivity extends AppCompatActivity {
         setupToolbar();
         setupRecyclerView();
         extensionManager = new ExtensionManager(getApplicationContext());
+        extensionsRepository = new ExtensionsRepository(getApplicationContext());
+        developerApi = new ExtensionDeveloperApi(getApplicationContext());
+        appDatabase = AppDatabase.getInstance(getApplicationContext());
         setupBottomNavigation();
         setupSearch();
         setupCategoryFilter();
         setupSorting();
-        applyFilters();
         loadExtensionsFromApi();
     }
 
@@ -88,6 +116,13 @@ public class ExtensionsShopActivity extends AppCompatActivity {
         sortToggleGroup = findViewById(R.id.toggle_group_extension_sort);
         bottomNavigation = findViewById(R.id.bottomNavigationShop);
         recyclerView = findViewById(R.id.rv_extensions_shop);
+        loadingView = findViewById(R.id.layout_extensions_shop_loading);
+        emptyView = findViewById(R.id.layout_extensions_shop_empty);
+        errorView = findViewById(R.id.layout_extensions_shop_error);
+        emptyMessageView = findViewById(R.id.tv_extensions_shop_empty);
+        errorMessageView = findViewById(R.id.tv_extensions_shop_error);
+        emptyRetryButton = findViewById(R.id.btn_extensions_shop_empty_retry);
+        errorRetryButton = findViewById(R.id.btn_extensions_shop_error_retry);
     }
 
     private void setupWindowInsets() {
@@ -115,35 +150,62 @@ public class ExtensionsShopActivity extends AppCompatActivity {
     private void setupRecyclerView() {
         recyclerView.setLayoutManager(new GridLayoutManager(this, resolveSpanCount()));
         recyclerView.setHasFixedSize(true);
-        adapter = new ExtensionsShopAdapter(this::openExtension);
+        adapter = new ExtensionsShopAdapter(this::openExtension, this::handleExtensionAction);
         recyclerView.setAdapter(adapter);
-        sourceItems = ExtensionsCatalog.getMockExtensions();
+        emptyRetryButton.setOnClickListener(v -> loadExtensionsFromApi());
+        errorRetryButton.setOnClickListener(v -> loadExtensionsFromApi());
+        showLoadingState();
     }
 
     private void loadExtensionsFromApi() {
-        extensionManager.listAvailable(1, 50, new ExtensionManager.Callback<List<ExtensionDto>>() {
+        isLoading = true;
+        lastErrorMessage = null;
+        showLoadingState();
+        extensionManager.listAvailable(1, 50, new ExtensionManager.Callback<>() {
             @Override
             public void onSuccess(List<ExtensionDto> result) {
-                if (result == null || result.isEmpty()) {
-                    return;
-                }
-                List<ExtensionItem> mapped = mapRemoteItems(result);
-                runOnUiThread(() -> {
-                    sourceItems = mapped;
-                    applyFilters();
+                executor.execute(() -> {
+                    List<ExtensionItem> mapped = mapRemoteItems(result == null ? Collections.emptyList() : result);
+                    runOnUiThread(() -> {
+                        isLoading = false;
+                        lastErrorMessage = null;
+                        sourceItems = mapped;
+                        applyFilters();
+                    });
                 });
             }
 
             @Override
             public void onError(Throwable t) {
-                runOnUiThread(() -> Snackbar.make(root, R.string.extension_catalog_fallback, Snackbar.LENGTH_SHORT).show());
+                runOnUiThread(() -> {
+                    isLoading = false;
+                    lastErrorMessage = t == null ? "unknown" : t.getMessage();
+                    sourceItems = new ArrayList<>();
+                    showErrorState(lastErrorMessage);
+                });
             }
         });
     }
 
     private List<ExtensionItem> mapRemoteItems(List<ExtensionDto> remoteItems) {
         List<ExtensionItem> result = new ArrayList<>();
+        Map<Integer, InstalledExtensionEntity> installedMap = new HashMap<>();
+        List<InstalledExtensionEntity> installedExtensions = appDatabase.installedExtensionDao().getAll();
+        if (installedExtensions != null) {
+            for (InstalledExtensionEntity entity : installedExtensions) {
+                if (entity != null) {
+                    installedMap.put(entity.extensionId, entity);
+                }
+            }
+        }
+
         for (ExtensionDto dto : remoteItems) {
+            InstalledExtensionEntity installedExtension = installedMap.get(dto.id);
+            boolean installed = installedExtension != null;
+            boolean updateAvailable = installed
+                    && dto.version != null
+                    && !TextUtils.isEmpty(installedExtension.installedVersion)
+                    && !dto.version.equalsIgnoreCase(installedExtension.installedVersion);
             String version = dto.version == null ? "1.0.0" : dto.version;
             String author = dto.authorName == null ? "Unknown" : dto.authorName;
             String shortDescription = dto.shortDescription == null ? "" : dto.shortDescription;
@@ -161,11 +223,41 @@ public class ExtensionsShopActivity extends AppCompatActivity {
                     shortDescription,
                     detailed,
                     R.drawable.ic_account_box,
-                    false,
-                    false
+                    installed,
+                    updateAvailable
             ));
         }
         return result;
+    }
+
+    private void showLoadingState() {
+        loadingView.setVisibility(View.VISIBLE);
+        emptyView.setVisibility(View.GONE);
+        errorView.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.GONE);
+    }
+
+    private void showErrorState(String message) {
+        errorMessageView.setText(getString(R.string.extension_shop_error, message == null ? "unknown" : message));
+        loadingView.setVisibility(View.GONE);
+        emptyView.setVisibility(View.GONE);
+        errorView.setVisibility(View.VISIBLE);
+        recyclerView.setVisibility(View.GONE);
+    }
+
+    private void showEmptyState(boolean filteredEmpty) {
+        emptyMessageView.setText(filteredEmpty ? R.string.extension_shop_empty_query : R.string.extension_shop_empty);
+        loadingView.setVisibility(View.GONE);
+        emptyView.setVisibility(View.VISIBLE);
+        errorView.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.GONE);
+    }
+
+    private void showContentState() {
+        loadingView.setVisibility(View.GONE);
+        emptyView.setVisibility(View.GONE);
+        errorView.setVisibility(View.GONE);
+        recyclerView.setVisibility(View.VISIBLE);
     }
 
     private int[] mapCategories(List<String> categories) {
@@ -312,6 +404,15 @@ public class ExtensionsShopActivity extends AppCompatActivity {
                 currentSortMode
         );
         adapter.submitList(filtered);
+        if (isLoading) {
+            showLoadingState();
+        } else if (lastErrorMessage != null) {
+            showErrorState(lastErrorMessage);
+        } else if (filtered.isEmpty()) {
+            showEmptyState(!sourceItems.isEmpty());
+        } else {
+            showContentState();
+        }
     }
 
     private int mapCategoryChipToStringRes(int chipId) {
@@ -337,6 +438,52 @@ public class ExtensionsShopActivity extends AppCompatActivity {
         Intent intent = new Intent(this, ExtensionActivity.class);
         intent.putExtra(ExtensionActivity.EXTRA_EXTENSION_ID, item.getId());
         startActivity(intent);
+    }
+
+    private void handleExtensionAction(ExtensionItem item) {
+        if (item.isInstalled() && !item.isUpdateAvailable()) {
+            openExtension(item);
+            return;
+        }
+
+        installOrUpdateFromShop(item);
+    }
+
+    private void installOrUpdateFromShop(ExtensionItem item) {
+        if (item == null) {
+            return;
+        }
+
+        Snackbar.make(root, R.string.extension_shop_installing, Snackbar.LENGTH_SHORT).show();
+        extensionsRepository.installAndActivate(
+                Integer.parseInt(item.getId()),
+                item.getVersion(),
+                ExtensionManager.DEFAULT_ENTRY_CLASS,
+                new ExtensionsRepository.ResultCallback<>() {
+                    @Override
+                    public void onSuccess(com.mtkp.multitool.extensions.LoadedExtension result) {
+                        runOnUiThread(() -> {
+                            Snackbar.make(root, getString(R.string.extension_action_install_success, result.displayName), Snackbar.LENGTH_LONG).show();
+                            loadExtensionsFromApi();
+                        });
+                    }
+
+                    @Override
+                    public void onError(Throwable throwable) {
+                        runOnUiThread(() -> Snackbar.make(root, getString(R.string.extension_action_install_error, throwable.getMessage()), Snackbar.LENGTH_LONG).show());
+                    }
+                }
+        );
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (firstResume) {
+            firstResume = false;
+            return;
+        }
+        loadExtensionsFromApi();
     }
 
     @Override
@@ -368,7 +515,46 @@ public class ExtensionsShopActivity extends AppCompatActivity {
             return;
         }
 
-        Snackbar.make(root, R.string.extension_upload_later, Snackbar.LENGTH_SHORT).show();
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_extension_edit, null, false);
+        TextInputEditText nameInput = dialogView.findViewById(R.id.et_extension_name);
+        TextInputEditText shortInput = dialogView.findViewById(R.id.et_extension_short_description);
+        TextInputEditText detailedInput = dialogView.findViewById(R.id.et_extension_detailed_description);
+
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.extension_shop_add_title)
+                .setView(dialogView)
+                .setNegativeButton(android.R.string.cancel, null)
+                .setPositiveButton(android.R.string.ok, (dialog, which) -> {
+                    String name = nameInput.getText() == null ? "" : nameInput.getText().toString().trim();
+                    String shortDescription = shortInput.getText() == null ? "" : shortInput.getText().toString().trim();
+                    String detailedDescription = detailedInput.getText() == null ? "" : detailedInput.getText().toString().trim();
+                    if (TextUtils.isEmpty(name) || TextUtils.isEmpty(shortDescription)) {
+                        Snackbar.make(root, R.string.extension_edit_invalid_input, Snackbar.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                    developerApi.createExtension(
+                            name,
+                            shortDescription,
+                            detailedDescription,
+                            Collections.emptyList(),
+                            new ExtensionDeveloperApi.Callback<>() {
+                                @Override
+                                public void onSuccess(ExtensionDto data) {
+                                    runOnUiThread(() -> {
+                                        Snackbar.make(root, R.string.extension_shop_add_success, Snackbar.LENGTH_SHORT).show();
+                                        loadExtensionsFromApi();
+                                    });
+                                }
+
+                                @Override
+                                public void onError(Throwable throwable) {
+                                    runOnUiThread(() -> Snackbar.make(root, getString(R.string.extension_shop_add_error, throwable.getMessage()), Snackbar.LENGTH_LONG).show());
+                                }
+                            }
+                    );
+                })
+                .show();
     }
 
     @Override

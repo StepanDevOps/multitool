@@ -90,10 +90,19 @@
     <string name="extension_badge_update">Update available</string>
     <string name="extension_badge_installed">Installed</string>
     <string name="extension_shop_meta">%1$.1f • %2$s installs</string>
-    <string name="extension_upload_action">Upload extension</string>
-    <string name="extension_shop_login_required">Sign in first in Settings to upload your extension</string>
-    <string name="extension_upload_later">Extension upload will be implemented later</string>
+    <string name="extension_upload_action">Publish extension</string>
+    <string name="extension_shop_login_required">Sign in first in Settings to publish your extension</string>
+    <string name="extension_upload_later">Extension publishing is available from the catalog form</string>
     <string name="extension_catalog_fallback">Could not load catalog from server. Showing local list.</string>
+    <string name="extension_shop_loading">Loading extensions…</string>
+    <string name="extension_shop_empty">No extensions found</string>
+    <string name="extension_shop_empty_query">No extensions match your filters</string>
+    <string name="extension_shop_error">Could not load extensions: %1$s</string>
+    <string name="extension_shop_retry">Retry</string>
+    <string name="extension_shop_add_title">Publish extension card</string>
+    <string name="extension_shop_add_success">Extension card created</string>
+    <string name="extension_shop_add_error">Could not create extension: %1$s</string>
+    <string name="extension_shop_installing">Installing…</string>
 
     <!-- Extension details -->
     <string name="extension_screen_title">Extension</string>

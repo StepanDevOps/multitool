@@ -82,10 +82,19 @@
     <string name="extension_badge_update">Есть обновление</string>
     <string name="extension_badge_installed">Установлено</string>
     <string name="extension_shop_meta">%1$.1f • %2$s установок</string>
-    <string name="extension_upload_action">Добавить плагин</string>
-    <string name="extension_shop_login_required">Сначала войдите в аккаунт в Настройках</string>
-    <string name="extension_upload_later">Загрузка расширений будет реализована позже</string>
+    <string name="extension_upload_action">Опубликовать расширение</string>
+    <string name="extension_shop_login_required">Сначала войдите в аккаунт в Настройках, чтобы опубликовать расширение</string>
+    <string name="extension_upload_later">Публикация расширений доступна через форму в магазине</string>
     <string name="extension_catalog_fallback">Не удалось загрузить каталог с сервера. Показан локальный список.</string>
+    <string name="extension_shop_loading">Загружаем расширения…</string>
+    <string name="extension_shop_empty">Расширений пока нет</string>
+    <string name="extension_shop_empty_query">По текущим фильтрам ничего не найдено</string>
+    <string name="extension_shop_error">Не удалось загрузить расширения: %1$s</string>
+    <string name="extension_shop_retry">Повторить</string>
+    <string name="extension_shop_add_title">Опубликовать карточку расширения</string>
+    <string name="extension_shop_add_success">Карточка расширения создана</string>
+    <string name="extension_shop_add_error">Не удалось создать расширение: %1$s</string>
+    <string name="extension_shop_installing">Устанавливаем…</string>
 
     <!-- Страница расширения -->
     <string name="extension_screen_title">Расширение</string>

@@ -16,7 +16,6 @@ import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.mtkp.multitool.R;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -24,7 +23,7 @@ import java.util.Locale;
 /**
  * Адаптер для сетки карточек в магазине расширений.
  */
-public class ExtensionsShopAdapter extends RecyclerView.Adapter<ExtensionsShopAdapter.ExtensionViewHolder> {
+class ExtensionsShopAdapter extends RecyclerView.Adapter<ExtensionsShopAdapter.ExtensionViewHolder> {
 
     /**
      * Обработчик нажатия на кнопку перехода в карточке.
@@ -33,23 +32,34 @@ public class ExtensionsShopAdapter extends RecyclerView.Adapter<ExtensionsShopAd
         void onExtensionClicked(ExtensionItem item);
     }
 
+    public interface OnExtensionActionListener {
+        void onExtensionActionClicked(ExtensionItem item);
+    }
+
     private final List<ExtensionItem> items = new ArrayList<>();
     private final OnExtensionClickListener listener;
-    private final NumberFormat numberFormat = NumberFormat.getIntegerInstance(Locale.getDefault());
+    private final OnExtensionActionListener actionListener;
 
-    public ExtensionsShopAdapter(OnExtensionClickListener listener) {
+    public ExtensionsShopAdapter(OnExtensionClickListener listener, OnExtensionActionListener actionListener) {
         this.listener = listener;
+        this.actionListener = actionListener;
     }
 
     /**
      * Обновляем список карточек.
      */
     public void submitList(List<ExtensionItem> newItems) {
+        int oldSize = items.size();
         items.clear();
         if (newItems != null) {
             items.addAll(newItems);
         }
-        notifyDataSetChanged();
+        if (oldSize > 0) {
+            notifyItemRangeRemoved(0, oldSize);
+        }
+        if (!items.isEmpty()) {
+            notifyItemRangeInserted(0, items.size());
+        }
     }
 
     @NonNull
@@ -57,7 +67,7 @@ public class ExtensionsShopAdapter extends RecyclerView.Adapter<ExtensionsShopAd
     public ExtensionViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_extension_shop, parent, false);
-        return new ExtensionViewHolder(view);
+        return new ExtensionViewHolder(view, listener, actionListener);
     }
 
     @Override
@@ -70,7 +80,7 @@ public class ExtensionsShopAdapter extends RecyclerView.Adapter<ExtensionsShopAd
         return items.size();
     }
 
-    class ExtensionViewHolder extends RecyclerView.ViewHolder {
+    public static class ExtensionViewHolder extends RecyclerView.ViewHolder {
 
         private final MaterialCardView card;
         private final ChipGroup chipGroupCategories;
@@ -79,9 +89,15 @@ public class ExtensionsShopAdapter extends RecyclerView.Adapter<ExtensionsShopAd
         private final TextView descriptionView;
         private final TextView metaView;
         private final MaterialButton actionButton;
+        private final OnExtensionClickListener listener;
+        private final OnExtensionActionListener actionListener;
 
-        ExtensionViewHolder(@NonNull View itemView) {
+        ExtensionViewHolder(@NonNull View itemView,
+                          OnExtensionClickListener listener,
+                          OnExtensionActionListener actionListener) {
             super(itemView);
+            this.listener = listener;
+            this.actionListener = actionListener;
             card = itemView.findViewById(R.id.card_extension_shop);
             chipGroupCategories = itemView.findViewById(R.id.chip_group_categories);
             iconView = itemView.findViewById(R.id.iv_extension_icon);
@@ -92,20 +108,33 @@ public class ExtensionsShopAdapter extends RecyclerView.Adapter<ExtensionsShopAd
         }
 
         void bind(ExtensionItem item) {
-            card.setOnClickListener(null);
             iconView.setImageResource(item.getIconResId());
             titleView.setText(item.getTitle());
             descriptionView.setText(item.getShortDescription());
             renderCategories(item.getCategoryResIds());
-            metaView.setText(itemView.getContext().getString(
+            String meta = itemView.getContext().getString(
                     R.string.extension_shop_meta,
                     item.getRating(),
-                    numberFormat.format(item.getInstalls())
-            ));
+                    java.text.NumberFormat.getIntegerInstance(Locale.getDefault()).format(item.getInstalls())
+            );
+            if (item.isUpdateAvailable()) {
+                meta = meta + " • " + itemView.getContext().getString(R.string.extension_badge_update);
+            } else if (item.isInstalled()) {
+                meta = meta + " • " + itemView.getContext().getString(R.string.extension_badge_installed);
+            }
+            metaView.setText(meta);
+
+            if (item.isUpdateAvailable()) {
+                actionButton.setText(R.string.extension_action_update);
+            } else if (item.isInstalled()) {
+                actionButton.setText(R.string.extension_open);
+            } else {
+                actionButton.setText(R.string.extension_action_install);
+            }
 
             actionButton.setOnClickListener(v -> {
-                if (listener != null) {
-                    listener.onExtensionClicked(item);
+                if (actionListener != null) {
+                    actionListener.onExtensionActionClicked(item);
                 }
             });
 
