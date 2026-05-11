@@ -1,17 +1,23 @@
 package com.mtkp.multitool.features.extensions;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.net.Uri;
+import android.provider.OpenableColumns;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.graphics.Insets;
@@ -27,15 +33,20 @@ import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.mtkp.multitool.R;
+import com.mtkp.multitool.data.remote.ApiRequestException;
 import com.mtkp.multitool.data.local.AppDatabase;
 import com.mtkp.multitool.data.local.InstalledExtensionEntity;
 import com.mtkp.multitool.data.remote.dto.ExtensionDto;
+import com.mtkp.multitool.data.remote.dto.UploadVersionResponseDto;
 import com.mtkp.multitool.data.repository.ExtensionsRepository;
 import com.mtkp.multitool.data.settings.SettingsStorage;
 import com.mtkp.multitool.extensions.ExtensionDeveloperApi;
 import com.mtkp.multitool.extensions.ExtensionManager;
 import com.mtkp.multitool.features.settings.SettingsActivity;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -82,6 +93,10 @@ public class ExtensionsShopActivity extends AppCompatActivity {
     private ExtensionDeveloperApi developerApi;
     private AppDatabase appDatabase;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private ActivityResultLauncher<String[]> publishJarPicker;
+    private Uri selectedPublishJarUri;
+    private String selectedPublishJarName;
+    private TextView selectedJarTextView;
     private boolean isLoading;
     private String lastErrorMessage;
     private boolean firstResume = true;
@@ -104,6 +119,7 @@ public class ExtensionsShopActivity extends AppCompatActivity {
         setupSearch();
         setupCategoryFilter();
         setupSorting();
+        registerPublishJarPicker();
         loadExtensionsFromApi();
     }
 
@@ -507,54 +523,234 @@ public class ExtensionsShopActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    private void registerPublishJarPicker() {
+        publishJarPicker = registerForActivityResult(
+                new ActivityResultContracts.OpenDocument(),
+                uri -> {
+                    if (uri == null) {
+                        return;
+                    }
+                    try {
+                        getContentResolver().takePersistableUriPermission(
+                                uri,
+                                Intent.FLAG_GRANT_READ_URI_PERMISSION
+                        );
+                    } catch (SecurityException ignored) {
+                    }
+                    selectedPublishJarUri = uri;
+                    selectedPublishJarName = resolveDisplayName(uri);
+                    if (selectedJarTextView != null) {
+                        selectedJarTextView.setText(selectedPublishJarName == null
+                                ? getString(R.string.extension_publish_no_file_selected)
+                                : selectedPublishJarName);
+                    }
+                }
+        );
+    }
+
     private void handleAddExtensionClick() {
         SettingsStorage storage = new SettingsStorage(getApplicationContext());
-        if (!storage.isAccountCreated()) {
+        if (TextUtils.isEmpty(storage.getAuthToken())) {
             Snackbar.make(root, R.string.extension_shop_login_required, Snackbar.LENGTH_SHORT).show();
             startActivity(new Intent(this, SettingsActivity.class));
             return;
         }
 
-        View dialogView = getLayoutInflater().inflate(R.layout.dialog_extension_edit, null, false);
-        TextInputEditText nameInput = dialogView.findViewById(R.id.et_extension_name);
-        TextInputEditText shortInput = dialogView.findViewById(R.id.et_extension_short_description);
-        TextInputEditText detailedInput = dialogView.findViewById(R.id.et_extension_detailed_description);
+        selectedPublishJarUri = null;
+        selectedPublishJarName = null;
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_extension_publish, null, false);
+        TextInputEditText nameInput = dialogView.findViewById(R.id.et_publish_extension_name);
+        TextInputEditText shortInput = dialogView.findViewById(R.id.et_publish_extension_short_description);
+        TextInputEditText detailedInput = dialogView.findViewById(R.id.et_publish_extension_detailed_description);
+        TextInputEditText versionInput = dialogView.findViewById(R.id.et_publish_extension_version);
+        TextInputEditText releaseNotesInput = dialogView.findViewById(R.id.et_publish_extension_release_notes);
+        TextInputEditText changelogInput = dialogView.findViewById(R.id.et_publish_extension_changelog);
+        View chooseJarButton = dialogView.findViewById(R.id.btn_publish_choose_jar);
+        selectedJarTextView = dialogView.findViewById(R.id.tv_publish_selected_jar);
 
-        new MaterialAlertDialogBuilder(this)
+        chooseJarButton.setOnClickListener(v -> publishJarPicker.launch(new String[]{
+                "application/java-archive",
+                "application/octet-stream",
+                "*/*"
+        }));
+
+        AlertDialog dialog = new MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.extension_shop_add_title)
                 .setView(dialogView)
                 .setNegativeButton(android.R.string.cancel, null)
-                .setPositiveButton(android.R.string.ok, (dialog, which) -> {
-                    String name = nameInput.getText() == null ? "" : nameInput.getText().toString().trim();
-                    String shortDescription = shortInput.getText() == null ? "" : shortInput.getText().toString().trim();
-                    String detailedDescription = detailedInput.getText() == null ? "" : detailedInput.getText().toString().trim();
-                    if (TextUtils.isEmpty(name) || TextUtils.isEmpty(shortDescription)) {
-                        Snackbar.make(root, R.string.extension_edit_invalid_input, Snackbar.LENGTH_SHORT).show();
-                        return;
+                .setPositiveButton(android.R.string.ok, null)
+                .show();
+
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(v -> {
+            String name = nameInput.getText() == null ? "" : nameInput.getText().toString().trim();
+            String shortDescription = shortInput.getText() == null ? "" : shortInput.getText().toString().trim();
+            String detailedDescription = detailedInput.getText() == null ? "" : detailedInput.getText().toString().trim();
+            String version = versionInput.getText() == null ? "" : versionInput.getText().toString().trim();
+            String releaseNotes = releaseNotesInput.getText() == null ? "" : releaseNotesInput.getText().toString().trim();
+            String changelog = changelogInput.getText() == null ? "" : changelogInput.getText().toString().trim();
+
+            if (TextUtils.isEmpty(name) || TextUtils.isEmpty(shortDescription)) {
+                Snackbar.make(root, R.string.extension_edit_invalid_input, Snackbar.LENGTH_SHORT).show();
+                return;
+            }
+            if (TextUtils.isEmpty(version)) {
+                Snackbar.make(root, R.string.extension_publish_version_required, Snackbar.LENGTH_SHORT).show();
+                return;
+            }
+            if (selectedPublishJarUri == null) {
+                Snackbar.make(root, R.string.extension_publish_file_required, Snackbar.LENGTH_SHORT).show();
+                return;
+            }
+
+            String jarName = selectedPublishJarName == null ? resolveDisplayName(selectedPublishJarUri) : selectedPublishJarName;
+            if (jarName == null || !jarName.toLowerCase(Locale.ROOT).endsWith(".jar")) {
+                Snackbar.make(root, R.string.extension_publish_invalid_file, Snackbar.LENGTH_SHORT).show();
+                return;
+            }
+
+            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+            uploadExtensionFlow(
+                    dialog,
+                    name,
+                    shortDescription,
+                    detailedDescription,
+                    version,
+                    releaseNotes,
+                    changelog,
+                    selectedPublishJarUri
+            );
+        });
+    }
+
+    private void uploadExtensionFlow(
+            AlertDialog dialog,
+            String name,
+            String shortDescription,
+            String detailedDescription,
+            String version,
+            String releaseNotes,
+            String changelog,
+            Uri jarUri
+    ) {
+        developerApi.createExtension(
+                name,
+                shortDescription,
+                detailedDescription,
+                Collections.emptyList(),
+                new ExtensionDeveloperApi.Callback<>() {
+                    @Override
+                    public void onSuccess(ExtensionDto data) {
+                        executor.execute(() -> {
+                            try {
+                                File tempJar = copyUriToTempJar(jarUri, name, version);
+                                developerApi.uploadVersion(
+                                        data.id,
+                                        version,
+                                        releaseNotes,
+                                        tempJar,
+                                        changelog,
+                                        new ExtensionDeveloperApi.Callback<UploadVersionResponseDto>() {
+                                            @Override
+                                            public void onSuccess(UploadVersionResponseDto uploadData) {
+                                                runOnUiThread(() -> {
+                                                    dialog.dismiss();
+                                                    Snackbar.make(root, R.string.extension_publish_upload_success, Snackbar.LENGTH_LONG).show();
+                                                    loadExtensionsFromApi();
+                                                });
+                                            }
+
+                                            @Override
+                                            public void onError(Throwable throwable) {
+                                                runOnUiThread(() -> {
+                                                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                                                    Snackbar.make(root, getPublishErrorMessage(throwable, R.string.extension_publish_upload_error), Snackbar.LENGTH_LONG).show();
+                                                });
+                                            }
+                                        }
+                                );
+                            } catch (Exception e) {
+                                runOnUiThread(() -> {
+                                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                                    Snackbar.make(root, getPublishErrorMessage(e, R.string.extension_publish_upload_error), Snackbar.LENGTH_LONG).show();
+                                });
+                            }
+                        });
                     }
 
-                    developerApi.createExtension(
-                            name,
-                            shortDescription,
-                            detailedDescription,
-                            Collections.emptyList(),
-                            new ExtensionDeveloperApi.Callback<>() {
-                                @Override
-                                public void onSuccess(ExtensionDto data) {
-                                    runOnUiThread(() -> {
-                                        Snackbar.make(root, R.string.extension_shop_add_success, Snackbar.LENGTH_SHORT).show();
-                                        loadExtensionsFromApi();
-                                    });
-                                }
+                    @Override
+                    public void onError(Throwable throwable) {
+                        runOnUiThread(() -> {
+                            dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                            Snackbar.make(root, getPublishErrorMessage(throwable, R.string.extension_publish_create_error), Snackbar.LENGTH_LONG).show();
+                        });
+                    }
+                }
+        );
+    }
 
-                                @Override
-                                public void onError(Throwable throwable) {
-                                    runOnUiThread(() -> Snackbar.make(root, getString(R.string.extension_shop_add_error, throwable.getMessage()), Snackbar.LENGTH_LONG).show());
-                                }
-                            }
-                    );
-                })
-                .show();
+    private File copyUriToTempJar(Uri uri, String extensionName, String version) throws Exception {
+        String safeName = extensionName == null ? "extension" : extensionName.replaceAll("[^a-zA-Z0-9._-]", "_");
+        String safeVersion = version == null ? "1.0.0" : version.replaceAll("[^a-zA-Z0-9._-]", "_");
+        File out = new File(getCacheDir(), safeName + "-" + safeVersion + ".jar");
+        try (InputStream inputStream = getContentResolver().openInputStream(uri);
+             FileOutputStream outputStream = new FileOutputStream(out)) {
+            if (inputStream == null) {
+                throw new IllegalStateException("Cannot open selected file");
+            }
+            byte[] buffer = new byte[8 * 1024];
+            int read;
+            while ((read = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, read);
+            }
+            outputStream.flush();
+        }
+        return out;
+    }
+
+    private String resolveDisplayName(Uri uri) {
+        Cursor cursor = null;
+        try {
+            cursor = getContentResolver().query(uri, null, null, null, null);
+            if (cursor != null && cursor.moveToFirst()) {
+                int index = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                if (index >= 0) {
+                    return cursor.getString(index);
+                }
+            }
+        } catch (Exception ignored) {
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+        }
+        return uri.getLastPathSegment();
+    }
+
+    private String getPublishErrorMessage(Throwable throwable, int fallbackResId) {
+        if (throwable instanceof ApiRequestException) {
+            int code = ((ApiRequestException) throwable).getCode();
+            if (code == 403) {
+                return getString(R.string.extension_publish_forbidden);
+            }
+            if (code == 401) {
+                return getString(R.string.extension_shop_login_required);
+            }
+            if (code == 413) {
+                return throwable.getMessage() == null ? getString(fallbackResId, "HTTP 413") : throwable.getMessage();
+            }
+            if (code >= 500) {
+                return throwable.getMessage() == null ? getString(fallbackResId, "server error") : throwable.getMessage();
+            }
+            return throwable.getMessage() == null
+                    ? getString(fallbackResId, "HTTP " + code)
+                    : throwable.getMessage();
+        }
+
+        String message = throwable == null ? null : throwable.getMessage();
+        if (TextUtils.isEmpty(message)) {
+            return getString(fallbackResId, "unknown error");
+        }
+        return getString(fallbackResId, message);
     }
 
     @Override

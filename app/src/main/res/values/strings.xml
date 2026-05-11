@@ -103,6 +103,19 @@
     <string name="extension_shop_add_success">Extension card created</string>
     <string name="extension_shop_add_error">Could not create extension: %1$s</string>
     <string name="extension_shop_installing">Installing…</string>
+    <string name="extension_publish_file_title">JAR file</string>
+    <string name="extension_publish_choose_file">Choose JAR file</string>
+    <string name="extension_publish_no_file_selected">No file selected</string>
+    <string name="extension_publish_version_hint">Version</string>
+    <string name="extension_publish_release_notes_hint">Release notes</string>
+    <string name="extension_publish_changelog_hint">Changelog</string>
+    <string name="extension_publish_file_required">Choose a JAR file to upload</string>
+    <string name="extension_publish_version_required">Enter a version before publishing</string>
+    <string name="extension_publish_invalid_file">Selected file is not a JAR archive</string>
+    <string name="extension_publish_forbidden">You do not have permission to publish extensions</string>
+    <string name="extension_publish_upload_success">Extension version uploaded</string>
+    <string name="extension_publish_upload_error">Could not upload version: %1$s</string>
+    <string name="extension_publish_create_error">Could not create extension: %1$s</string>
 
     <!-- Extension details -->
     <string name="extension_screen_title">Extension</string>

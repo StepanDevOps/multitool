@@ -95,6 +95,19 @@
     <string name="extension_shop_add_success">Карточка расширения создана</string>
     <string name="extension_shop_add_error">Не удалось создать расширение: %1$s</string>
     <string name="extension_shop_installing">Устанавливаем…</string>
+    <string name="extension_publish_file_title">JAR-файл</string>
+    <string name="extension_publish_choose_file">Выбрать JAR-файл</string>
+    <string name="extension_publish_no_file_selected">Файл не выбран</string>
+    <string name="extension_publish_version_hint">Версия</string>
+    <string name="extension_publish_release_notes_hint">Описание релиза</string>
+    <string name="extension_publish_changelog_hint">Changelog</string>
+    <string name="extension_publish_file_required">Выберите JAR-файл для загрузки</string>
+    <string name="extension_publish_version_required">Укажите версию перед публикацией</string>
+    <string name="extension_publish_invalid_file">Выбранный файл не является JAR-архивом</string>
+    <string name="extension_publish_forbidden">У этого аккаунта нет прав на публикацию расширений</string>
+    <string name="extension_publish_upload_success">Версия расширения загружена</string>
+    <string name="extension_publish_upload_error">Не удалось загрузить версию: %1$s</string>
+    <string name="extension_publish_create_error">Не удалось создать расширение: %1$s</string>
 
     <!-- Страница расширения -->
     <string name="extension_screen_title">Расширение</string>
