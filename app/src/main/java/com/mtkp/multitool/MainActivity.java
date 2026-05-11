@@ -17,14 +17,21 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.mtkp.multitool.data.local.AppDatabase;
+import com.mtkp.multitool.data.local.CachedExtensionEntity;
+import com.mtkp.multitool.data.local.InstalledExtensionEntity;
 import com.mtkp.multitool.features.extensions.ExtensionAdapter;
 import com.mtkp.multitool.features.extensions.ExtensionMenuManager;
 import com.mtkp.multitool.features.extensions.ExtensionsBottomSheetFragment;
+import com.mtkp.multitool.features.extensions.ExtensionActivity;
 import com.mtkp.multitool.features.extensions.ExtensionsShopActivity;
 import com.mtkp.multitool.features.settings.SettingsActivity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * Главный экран приложения.
@@ -37,6 +44,10 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView rvExtensions;
     private BottomNavigationView bottomNavigation;
     private Toolbar toolbar;
+    private final List<ExtensionAdapter.Extension> extensionList = new ArrayList<>();
+    private ExtensionAdapter extensionAdapter;
+    private AppDatabase appDatabase;
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +76,14 @@ public class MainActivity extends AppCompatActivity {
         setupRecyclerView();
         setupBottomNavigation();
         setupToolbar();
+        appDatabase = AppDatabase.getInstance(getApplicationContext());
+        loadInstalledExtensions();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadInstalledExtensions();
     }
 
     /**
@@ -85,14 +104,13 @@ public class MainActivity extends AppCompatActivity {
         GridLayoutManager gridLayoutManager = new GridLayoutManager(this, 3);
         rvExtensions.setLayoutManager(gridLayoutManager);
 
-        // Фейковые данные, пока не подключили реальное хранилище.
-        List<ExtensionAdapter.Extension> extensionList = new ArrayList<>();
-        extensionList.add(new ExtensionAdapter.Extension("Notes", "Note taking", R.drawable.ic_notes));
-        extensionList.add(new ExtensionAdapter.Extension("Weather", "Weather info", R.drawable.ic_home));
-        extensionList.add(new ExtensionAdapter.Extension("Favorites", "Favorites", R.drawable.ic_favorite));
-
         // Адаптер связывает список данных с карточками на экране.
-        ExtensionAdapter extensionAdapter = new ExtensionAdapter(extensionList, new ExtensionAdapter.OnExtensionActionListener() {
+        extensionAdapter = new ExtensionAdapter(extensionList, new ExtensionAdapter.OnExtensionActionListener() {
+            @Override
+            public void onExtensionClicked(ExtensionAdapter.Extension extension) {
+                openExtension(extension);
+            }
+
             @Override
             public void onEditMenuClicked(ExtensionAdapter.Extension extension, View anchorView) {
                 showEditMenu(extension, anchorView);
@@ -106,6 +124,54 @@ public class MainActivity extends AppCompatActivity {
         });
 
         rvExtensions.setAdapter(extensionAdapter);
+    }
+
+    private void loadInstalledExtensions() {
+        executor.execute(() -> {
+            List<ExtensionAdapter.Extension> mapped = new ArrayList<>();
+            List<InstalledExtensionEntity> installed = appDatabase.installedExtensionDao().getAll();
+            for (InstalledExtensionEntity entity : installed) {
+                if (entity == null || entity.isHidden) {
+                    continue;
+                }
+
+                CachedExtensionEntity cached = appDatabase.cachedExtensionDao().getById(entity.extensionId);
+                String title = cached != null && cached.name != null && !cached.name.isEmpty()
+                        ? cached.name
+                        : String.format(Locale.getDefault(), "Extension %d", entity.extensionId);
+                String description = cached != null && cached.shortDescription != null
+                        ? cached.shortDescription
+                        : entity.installedVersion;
+                int icon = resolveIconForExtension(entity.extensionId, title);
+                mapped.add(new ExtensionAdapter.Extension(
+                        String.valueOf(entity.extensionId),
+                        title,
+                        description,
+                        icon
+                ));
+            }
+
+            runOnUiThread(() -> {
+                extensionList.clear();
+                extensionList.addAll(mapped);
+                extensionAdapter.notifyDataSetChanged();
+            });
+        });
+    }
+
+    private int resolveIconForExtension(int extensionId, String title) {
+        if (title != null) {
+            String normalized = title.toLowerCase(Locale.ROOT);
+            if (normalized.contains("note")) return R.drawable.ic_notes;
+            if (normalized.contains("weather")) return R.drawable.ic_home;
+            if (normalized.contains("favorite")) return R.drawable.ic_favorite;
+        }
+        switch (extensionId % 4) {
+            case 0: return R.drawable.ic_notes;
+            case 1: return R.drawable.ic_home;
+            case 2: return R.drawable.ic_favorite;
+            default: return R.drawable.ic_account_box;
+        }
     }
 
     /**
@@ -172,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDelete() {
                 Toast.makeText(MainActivity.this, "Delete " + extension.getName(), Toast.LENGTH_SHORT).show();
-                // TODO: Реализовать логику удаления расширения
+                // TODO: Подключить локальное удаление/деактивацию через repository
             }
 
             @Override
@@ -189,5 +255,11 @@ public class MainActivity extends AppCompatActivity {
         // Меню поверх экрана с простым списком установленных расширений.
         ExtensionsBottomSheetFragment bottomSheet = ExtensionsBottomSheetFragment.newInstance();
         bottomSheet.show(getSupportFragmentManager(), "extensions_bottom_sheet");
+    }
+
+    private void openExtension(ExtensionAdapter.Extension extension) {
+        Intent intent = new Intent(this, ExtensionActivity.class);
+        intent.putExtra(ExtensionActivity.EXTRA_EXTENSION_ID, extension.getId());
+        startActivity(intent);
     }
 }

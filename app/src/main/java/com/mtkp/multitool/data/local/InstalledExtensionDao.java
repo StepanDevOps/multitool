@@ -20,6 +20,9 @@ public interface InstalledExtensionDao {
     @Query("SELECT * FROM installed_extensions WHERE id = :id LIMIT 1")
     InstalledExtensionEntity getById(int id);
 
+    @Query("SELECT * FROM installed_extensions WHERE extensionId = :extensionId LIMIT 1")
+    InstalledExtensionEntity getByExtensionId(int extensionId);
+
 
     @Insert
     long insert(InstalledExtensionEntity installed);

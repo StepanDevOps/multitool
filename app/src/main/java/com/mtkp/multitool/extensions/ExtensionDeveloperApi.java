@@ -122,5 +122,26 @@ public class ExtensionDeveloperApi {
             }
         });
     }
-}
 
+    public void updateReview(int extensionId, int ratingId, Integer rating, String review, Callback<RatingDto> callback) {
+        executor.execute(() -> {
+            try {
+                RatingDto dto = api.updateRating(extensionId, ratingId, rating, review);
+                callback.onSuccess(dto);
+            } catch (Exception e) {
+                callback.onError(e);
+            }
+        });
+    }
+
+    public void deleteReview(int extensionId, int ratingId, Callback<Void> callback) {
+        executor.execute(() -> {
+            try {
+                api.deleteRating(extensionId, ratingId);
+                callback.onSuccess(null);
+            } catch (Exception e) {
+                callback.onError(e);
+            }
+        });
+    }
+}

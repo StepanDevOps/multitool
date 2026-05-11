@@ -11,15 +11,25 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.mtkp.multitool.R;
+import com.mtkp.multitool.data.local.AppDatabase;
+import com.mtkp.multitool.data.local.CachedExtensionEntity;
+import com.mtkp.multitool.data.local.InstalledExtensionEntity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * BottomSheetDialogFragment для отображения списка установленных расширений.
  * Открывается снизу вверх при нажатии на "Установленные расширения" в навигации.
  */
 public class ExtensionsBottomSheetFragment extends BottomSheetDialogFragment {
+
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+    private final List<String> extensionNames = new ArrayList<>();
+    private ExtensionListAdapter adapter;
 
     public static ExtensionsBottomSheetFragment newInstance() {
         return new ExtensionsBottomSheetFragment();
@@ -39,15 +49,39 @@ public class ExtensionsBottomSheetFragment extends BottomSheetDialogFragment {
         RecyclerView recyclerView = view.findViewById(R.id.rv_bottom_sheet_extensions);
         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-        // Подготовка данных (пока фейковые данные)
-        List<String> extensionNames = new ArrayList<>();
-        extensionNames.add("Notes");
-        extensionNames.add("Weather");
-        extensionNames.add("Calculator");
-        extensionNames.add("Settings");
-
-        ExtensionListAdapter adapter = new ExtensionListAdapter(extensionNames);
+        adapter = new ExtensionListAdapter(extensionNames);
         recyclerView.setAdapter(adapter);
+
+        loadInstalledExtensions();
+    }
+
+    private void loadInstalledExtensions() {
+        final android.content.Context appContext = requireContext().getApplicationContext();
+        executor.execute(() -> {
+            AppDatabase db = AppDatabase.getInstance(appContext);
+            List<String> names = new ArrayList<>();
+            for (InstalledExtensionEntity entity : db.installedExtensionDao().getAll()) {
+                if (entity == null || entity.isHidden) continue;
+                CachedExtensionEntity cached = db.cachedExtensionDao().getById(entity.extensionId);
+                if (cached != null && cached.name != null && !cached.name.isEmpty()) {
+                    names.add(cached.name + " v" + entity.installedVersion);
+                } else {
+                    names.add(String.format(Locale.getDefault(), "Extension %d", entity.extensionId));
+                }
+            }
+
+            if (names.isEmpty()) {
+                names.add("No installed extensions yet");
+            }
+
+            if (isAdded()) {
+                requireActivity().runOnUiThread(() -> {
+                    extensionNames.clear();
+                    extensionNames.addAll(names);
+                    adapter.notifyDataSetChanged();
+                });
+            }
+        });
     }
 
     /**

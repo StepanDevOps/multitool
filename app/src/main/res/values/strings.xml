@@ -109,6 +109,8 @@
     <string name="extension_action_update">Update</string>
     <string name="extension_action_check_updates">Check updates</string>
     <string name="extension_action_delete">Delete</string>
+    <string name="extension_action_edit_metadata">Edit metadata</string>
+    <string name="extension_action_add_review">Add review</string>
     <string name="extension_action_placeholder">Action "%1$s" will be implemented later</string>
     <string name="extension_action_mock_not_supported">This action is not available for mock extensions</string>
     <string name="extension_action_install_success">Extension loaded and activated: %1$s</string>
@@ -116,4 +118,16 @@
     <string name="extension_action_delete_success">Extension removed</string>
     <string name="extension_action_delete_not_found">Extension file not found</string>
     <string name="extension_action_delete_error">Delete error: %1$s</string>
+    <string name="extension_reviews_title">Reviews</string>
+    <string name="extension_reviews_empty">No reviews yet</string>
+    <string name="extension_review_rating_label">Rating</string>
+    <string name="extension_review_text_hint">Review text</string>
+    <string name="extension_edit_name_hint">Extension name</string>
+    <string name="extension_edit_short_hint">Short description</string>
+    <string name="extension_edit_detailed_hint">Detailed markdown description</string>
+    <string name="extension_review_success">Review sent</string>
+    <string name="extension_review_error">Review error: %1$s</string>
+    <string name="extension_edit_success">Extension metadata updated</string>
+    <string name="extension_edit_error">Update error: %1$s</string>
+    <string name="extension_edit_invalid_input">Please fill name and short description</string>
 </resources>

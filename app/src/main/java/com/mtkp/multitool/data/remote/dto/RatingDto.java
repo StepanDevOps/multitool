@@ -10,6 +10,7 @@ public class RatingDto {
     public int rating;
     public String review;
     public long createdAt;
+    public String authorUsername;  // имя пользователя автора отзыва
 
     public RatingDto() {
     }

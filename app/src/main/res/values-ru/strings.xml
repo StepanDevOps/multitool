@@ -101,6 +101,8 @@
     <string name="extension_action_update">Обновить</string>
     <string name="extension_action_check_updates">Проверить обновления</string>
     <string name="extension_action_delete">Удалить</string>
+    <string name="extension_action_edit_metadata">Редактировать карточку</string>
+    <string name="extension_action_add_review">Оставить отзыв</string>
     <string name="extension_action_placeholder">Действие "%1$s" будет реализовано позже</string>
     <string name="extension_action_mock_not_supported">Для mock-расширений это действие недоступно</string>
     <string name="extension_action_install_success">Расширение загружено и активировано: %1$s</string>
@@ -108,5 +110,17 @@
     <string name="extension_action_delete_success">Расширение удалено</string>
     <string name="extension_action_delete_not_found">Файл расширения не найден</string>
     <string name="extension_action_delete_error">Ошибка удаления: %1$s</string>
+    <string name="extension_reviews_title">Отзывы</string>
+    <string name="extension_reviews_empty">Пока отзывов нет</string>
+    <string name="extension_review_rating_label">Оценка</string>
+    <string name="extension_review_text_hint">Текст отзыва</string>
+    <string name="extension_edit_name_hint">Название расширения</string>
+    <string name="extension_edit_short_hint">Краткое описание</string>
+    <string name="extension_edit_detailed_hint">Подробное markdown-описание</string>
+    <string name="extension_review_success">Отзыв отправлен</string>
+    <string name="extension_review_error">Ошибка отправки отзыва: %1$s</string>
+    <string name="extension_edit_success">Карточка расширения обновлена</string>
+    <string name="extension_edit_error">Ошибка обновления: %1$s</string>
+    <string name="extension_edit_invalid_input">Заполни название и краткое описание</string>
 </resources>
 

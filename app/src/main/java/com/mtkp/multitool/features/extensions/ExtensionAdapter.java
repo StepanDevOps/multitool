@@ -25,6 +25,7 @@ public class ExtensionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     private final OnExtensionActionListener listener;
 
     public interface OnExtensionActionListener {
+        void onExtensionClicked(Extension extension);
         void onEditMenuClicked(Extension extension, View anchorView);
         void onAddNewExtension();
     }
@@ -85,15 +86,24 @@ public class ExtensionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
     public class ExtensionViewHolder extends RecyclerView.ViewHolder {
         TextView tvExtensionName;
         ImageButton btnEditMenu;
+        ImageView ivExtensionIcon;
 
         public ExtensionViewHolder(@NonNull View itemView) {
             super(itemView);
+            ivExtensionIcon = itemView.findViewById(R.id.iv_extension_icon);
             tvExtensionName = itemView.findViewById(R.id.tv_extension_name);
             btnEditMenu = itemView.findViewById(R.id.btn_edit_menu);
         }
 
         public void bind(Extension extension, int position) {
+            ivExtensionIcon.setImageResource(extension.getIconResId());
             tvExtensionName.setText(extension.getName());
+
+            itemView.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onExtensionClicked(extension);
+                }
+            });
 
             btnEditMenu.setOnClickListener(v -> {
                 if (listener != null) {
@@ -138,16 +148,19 @@ public class ExtensionAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
      * Простая модель данных одного расширения.
      */
     public static class Extension {
+        private final String id;
         private final String name;
         private final String description;
         private final int iconResId;
 
-        public Extension(String name, String description, int iconResId) {
+        public Extension(String id, String name, String description, int iconResId) {
+            this.id = id;
             this.name = name;
             this.description = description;
             this.iconResId = iconResId;
         }
 
+        public String getId() { return id; }
         public String getName() { return name; }
         public String getDescription() { return description; }
         public int getIconResId() { return iconResId; }
